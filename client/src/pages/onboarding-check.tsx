@@ -2,14 +2,39 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, RefreshCcw, CheckCircle2, AlertCircle, TrendingUp, Power, BarChart3, Users } from "lucide-react";
-import { questions, results } from "@/data/questions";
+import { ArrowRight, ArrowLeft, RefreshCcw, CheckCircle2, AlertCircle, TrendingUp, Power, BarChart3, Users, Settings } from "lucide-react";
+import { questions as defaultQuestions, results as defaultResults } from "@/data/questions";
 import hronLogo from "@assets/HR_ON_logo_IceBlue1000px_1763730225207.png";
+import { Link } from "wouter";
 
 export default function OnboardingMaturityCheck() {
   const [currentStep, setCurrentStep] = useState<"start" | number | "result">("start");
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [hoveredOption, setHoveredOption] = useState<number | null>(null);
+  const [config, setConfig] = useState<any>(null);
+  const [questions, setQuestions] = useState(defaultQuestions);
+  const [results, setResults] = useState(defaultResults);
+
+  useEffect(() => {
+    fetchConfig();
+  }, []);
+
+  const fetchConfig = async () => {
+    try {
+      const res = await fetch("/api/config");
+      const data = await res.json();
+      setConfig(data);
+      
+      if (data.questionsData && data.questionsData.length > 0) {
+        setQuestions(data.questionsData);
+      }
+      if (data.resultsData && data.resultsData.length > 0) {
+        setResults(data.resultsData);
+      }
+    } catch (error) {
+      console.error("Failed to load config:", error);
+    }
+  };
 
   const startQuiz = () => setCurrentStep(0);
   
@@ -65,7 +90,9 @@ export default function OnboardingMaturityCheck() {
   const triggerConfetti = () => {
     const duration = 3 * 1000;
     const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0, colors: ['#2F80ED', '#0B1E3D', '#ffffff'] };
+    const primaryColor = config?.primaryColor || '#2F80ED';
+    const secondaryColor = config?.secondaryColor || '#0B1E3D';
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0, colors: [primaryColor, secondaryColor, '#ffffff'] };
 
     const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
@@ -94,11 +121,18 @@ export default function OnboardingMaturityCheck() {
       {/* Minimalist Header */}
       <header className="w-full px-8 py-6 flex justify-between items-center z-50 relative">
         <img src={hronLogo} alt="HR-ON" className="h-10 w-auto" />
-        {typeof currentStep === "number" && (
-          <div className="text-sm font-bold text-blue-900 tracking-widest uppercase">
-            Spørgsmål {currentStep + 1} / {questions.length}
-          </div>
-        )}
+        <div className="flex items-center gap-4">
+          {typeof currentStep === "number" && (
+            <div className="text-sm font-bold text-blue-900 tracking-widest uppercase">
+              Spørgsmål {currentStep + 1} / {questions.length}
+            </div>
+          )}
+          <Link href="/admin">
+            <Button variant="ghost" size="sm" className="text-slate-400 hover:text-slate-600">
+              <Settings className="w-5 h-5" />
+            </Button>
+          </Link>
+        </div>
       </header>
 
       <main className="flex-1 flex flex-col relative z-10 container mx-auto px-6 max-w-7xl">
@@ -120,12 +154,10 @@ export default function OnboardingMaturityCheck() {
                   transition={{ delay: 0.2 }}
                 >
                   <span className="inline-block py-1 px-3 rounded bg-blue-50 text-blue-600 text-xs font-bold tracking-[0.2em] uppercase mb-6">
-                    HR Maturity Tools
+                    {config?.subtitle || "HR Maturity Tools"}
                   </span>
                   <h1 className="text-6xl md:text-7xl font-black text-slate-900 tracking-tight leading-[0.95]">
-                    Er jeres <br/>
-                    <span className="text-blue-600">onboarding</span> <br/>
-                    gearet til fremtiden?
+                    {config?.title || "Er jeres onboarding gearet til fremtiden?"}
                   </h1>
                 </motion.div>
                 
@@ -135,7 +167,7 @@ export default function OnboardingMaturityCheck() {
                   transition={{ delay: 0.3 }}
                   className="text-xl text-slate-600 leading-relaxed max-w-lg border-l-4 border-blue-200 pl-6"
                 >
-                  Tag vores 2-minutters maturity check og få en dybdegående analyse af jeres styrker og potentialer.
+                  {config?.description || "Tag vores 2-minutters maturity check og få en dybdegående analyse af jeres styrker og potentialer."}
                 </motion.p>
 
                 <motion.div
@@ -146,9 +178,13 @@ export default function OnboardingMaturityCheck() {
                 >
                   <Button 
                     onClick={startQuiz} 
-                    className="h-16 px-10 text-lg bg-blue-600 hover:bg-blue-700 text-white rounded-none border-2 border-transparent hover:border-blue-800 transition-all shadow-xl shadow-blue-600/20"
+                    className="h-16 px-10 text-lg text-white rounded-none border-2 border-transparent transition-all shadow-xl"
+                    style={{ 
+                      backgroundColor: config?.primaryColor || "#2F80ED",
+                      boxShadow: `0 20px 25px -5px ${config?.primaryColor || "#2F80ED"}33`
+                    }}
                   >
-                    Start testen nu <ArrowRight className="ml-3 w-5 h-5" />
+                    {config?.buttonText || "Start testen nu"} <ArrowRight className="ml-3 w-5 h-5" />
                   </Button>
                 </motion.div>
               </div>
@@ -212,10 +248,10 @@ export default function OnboardingMaturityCheck() {
                   <div className="w-12 h-12 bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xl rounded-full mb-6">
                     {currentStep + 1}
                   </div>
-                  <h2 className="text-4xl font-bold text-[#0B1E3D] leading-tight">
-                    {questions[currentStep].text}
+                  <h2 className="text-4xl font-bold leading-tight" style={{ color: config?.secondaryColor || "#0B1E3D" }}>
+                    {questions[currentStep]?.text}
                   </h2>
-                  <div className="h-1 w-24 bg-[#2F80ED]" />
+                  <div className="h-1 w-24" style={{ backgroundColor: config?.primaryColor || "#2F80ED" }} />
                   <p className="text-slate-500 uppercase tracking-wider font-bold text-sm">
                     {questions[currentStep].category}
                   </p>
@@ -233,15 +269,19 @@ export default function OnboardingMaturityCheck() {
                       className={`
                         group relative w-full text-left p-6 transition-all duration-200 border-l-4 
                         ${answers[currentStep] === option.points 
-                          ? "bg-[#0B1E3D] border-[#2F80ED] text-white shadow-xl scale-[1.02]" 
-                          : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-[#2F80ED]/50 hover:text-[#0B1E3D]"}
+                          ? "text-white shadow-xl scale-[1.02]" 
+                          : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900"}
                       `}
+                      style={answers[currentStep] === option.points ? {
+                        backgroundColor: config?.secondaryColor || "#0B1E3D",
+                        borderColor: config?.primaryColor || "#2F80ED"
+                      } : {}}
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-lg font-medium pr-8">{option.text}</span>
                         {answers[currentStep] === option.points && (
                           <motion.div layoutId="check">
-                             <CheckCircle2 className="w-6 h-6 text-[#2F80ED]" />
+                             <CheckCircle2 className="w-6 h-6" style={{ color: config?.primaryColor || "#2F80ED" }} />
                           </motion.div>
                         )}
                       </div>
@@ -254,7 +294,8 @@ export default function OnboardingMaturityCheck() {
                 <button 
                   onClick={prevStep} 
                   disabled={currentStep === 0}
-                  className="flex items-center text-slate-400 hover:text-[#0B1E3D] disabled:opacity-30 transition-colors font-medium"
+                  className="flex items-center disabled:opacity-30 transition-colors font-medium"
+                  style={{ color: "rgb(148, 163, 184)", hover: { color: config?.secondaryColor || "#0B1E3D" } }}
                 >
                   <ArrowLeft className="mr-2 w-4 h-4" /> Forrige spørgsmål
                 </button>
@@ -264,7 +305,8 @@ export default function OnboardingMaturityCheck() {
                   {questions.map((_, idx) => (
                     <div 
                       key={idx}
-                      className={`w-2 h-2 rounded-full transition-colors ${idx <= currentStep ? 'bg-[#2F80ED]' : 'bg-slate-200'}`}
+                      className={`w-2 h-2 rounded-full transition-colors ${idx <= currentStep ? '' : 'bg-slate-200'}`}
+                      style={idx <= currentStep ? { backgroundColor: config?.primaryColor || "#2F80ED" } : {}}
                     />
                   ))}
                 </div>
@@ -276,8 +318,9 @@ export default function OnboardingMaturityCheck() {
                     flex items-center font-bold transition-all
                     ${answers[currentStep] === undefined 
                       ? "text-slate-300 cursor-not-allowed" 
-                      : "text-[#2F80ED] hover:text-blue-800 hover:translate-x-1"}
+                      : "hover:translate-x-1"}
                   `}
+                  style={answers[currentStep] !== undefined ? { color: config?.primaryColor || "#2F80ED" } : {}}
                 >
                   Næste trin <ArrowRight className="ml-2 w-5 h-5" />
                 </button>
@@ -297,10 +340,10 @@ export default function OnboardingMaturityCheck() {
                 
                 {/* Score Card - Left Side */}
                 <div className="lg:col-span-5 bg-white rounded-3xl p-8 shadow-[0_20px_50px_-12px_rgba(11,30,61,0.1)] border border-slate-100 relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-2 bg-[#2F80ED]" />
+                  <div className="absolute top-0 left-0 w-full h-2" style={{ backgroundColor: config?.primaryColor || "#2F80ED" }} />
                   
                   <div className="text-center pt-6 pb-10">
-                    <h3 className="text-[#0B1E3D] font-bold tracking-widest uppercase text-xs mb-8">Onboarding Maturity Score</h3>
+                    <h3 className="font-bold tracking-widest uppercase text-xs mb-8" style={{ color: config?.secondaryColor || "#0B1E3D" }}>Onboarding Maturity Score</h3>
                     
                     <div className="relative w-56 h-56 mx-auto mb-6">
                       {/* Outer Glow */}
@@ -320,7 +363,7 @@ export default function OnboardingMaturityCheck() {
                           cy="112"
                           r="100"
                           fill="none"
-                          stroke="#2F80ED" 
+                          stroke={config?.primaryColor || "#2F80ED"} 
                           strokeWidth="16"
                           strokeDasharray={2 * Math.PI * 100}
                           initial={{ strokeDashoffset: 2 * Math.PI * 100 }}
@@ -330,15 +373,15 @@ export default function OnboardingMaturityCheck() {
                         />
                       </svg>
                       <div className="absolute inset-0 flex items-center justify-center flex-col">
-                        <span className="text-6xl font-black text-[#0B1E3D] tracking-tighter">{calculateScore()}</span>
+                        <span className="text-6xl font-black tracking-tighter" style={{ color: config?.secondaryColor || "#0B1E3D" }}>{calculateScore()}</span>
                         <span className="text-slate-400 font-medium text-sm">af 30 point</span>
                       </div>
                     </div>
 
-                    <h2 className="text-2xl font-bold text-[#0B1E3D] mb-3 leading-tight">
-                      {getResult().title}
+                    <h2 className="text-2xl font-bold mb-3 leading-tight" style={{ color: config?.secondaryColor || "#0B1E3D" }}>
+                      {getResult()?.title}
                     </h2>
-                    <div className="h-1 w-12 bg-[#2F80ED] mx-auto rounded-full mb-4" />
+                    <div className="h-1 w-12 mx-auto rounded-full mb-4" style={{ backgroundColor: config?.primaryColor || "#2F80ED" }} />
                   </div>
                   
                   <div className="bg-slate-50 -mx-8 -mb-8 p-8 border-t border-slate-100">
@@ -351,8 +394,8 @@ export default function OnboardingMaturityCheck() {
                 {/* Insights & Action - Right Side */}
                 <div className="lg:col-span-7 space-y-6">
                   <div className="bg-white rounded-3xl p-8 shadow-[0_20px_50px_-12px_rgba(11,30,61,0.08)] border border-slate-100">
-                    <h3 className="text-[#0B1E3D] font-bold text-lg mb-6 flex items-center gap-2">
-                      <BarChart3 className="w-5 h-5 text-[#2F80ED]" />
+                    <h3 className="font-bold text-lg mb-6 flex items-center gap-2" style={{ color: config?.secondaryColor || "#0B1E3D" }}>
+                      <BarChart3 className="w-5 h-5" style={{ color: config?.primaryColor || "#2F80ED" }} />
                       Analyse af jeres niveau
                     </h3>
                     
@@ -363,7 +406,12 @@ export default function OnboardingMaturityCheck() {
                           initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.3 + idx * 0.1 }}
-                          className="flex gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 transition-all hover:border-[#2F80ED]/30 hover:bg-blue-50/30"
+                          className="flex gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 transition-all"
+                          style={{ 
+                            "--hover-border": `${config?.primaryColor || "#2F80ED"}4d`,
+                          } as any}
+                          onMouseEnter={(e) => e.currentTarget.style.borderColor = `${config?.primaryColor || "#2F80ED"}4d`}
+                          onMouseLeave={(e) => e.currentTarget.style.borderColor = "#e2e8f0"}
                         >
                           <div className={`mt-1 shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                             bullet.type === "strength" ? "bg-green-100 text-green-600" :
@@ -392,8 +440,8 @@ export default function OnboardingMaturityCheck() {
                   </div>
 
                   {/* HR-ON Branded CTA */}
-                  <div className="bg-[#0B1E3D] rounded-3xl p-8 text-white relative overflow-hidden shadow-xl">
-                     <div className="absolute top-0 right-0 w-64 h-64 bg-[#2F80ED] rounded-full blur-[80px] opacity-40 translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+                  <div className="rounded-3xl p-8 text-white relative overflow-hidden shadow-xl" style={{ backgroundColor: config?.secondaryColor || "#0B1E3D" }}>
+                     <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] opacity-40 translate-x-1/3 -translate-y-1/3 pointer-events-none" style={{ backgroundColor: config?.primaryColor || "#2F80ED" }} />
                      
                      <div className="relative z-10 flex flex-col md:flex-row items-center gap-6 justify-between">
                        <div className="flex items-center gap-4">
@@ -409,7 +457,7 @@ export default function OnboardingMaturityCheck() {
                        </div>
                        
                        <div className="flex flex-col gap-2 w-full md:w-auto">
-                         <Button className="bg-[#2F80ED] hover:bg-blue-600 text-white border-none h-10 rounded-full px-6 font-semibold text-sm">
+                         <Button className="text-white border-none h-10 rounded-full px-6 font-semibold text-sm" style={{ backgroundColor: config?.primaryColor || "#2F80ED" }}>
                            Læs mere
                          </Button>
                          <Button 
