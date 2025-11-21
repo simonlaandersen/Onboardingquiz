@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { ArrowRight, ArrowLeft, RefreshCcw, CheckCircle2, AlertCircle, TrendingUp, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeft, RefreshCcw, CheckCircle2, AlertCircle, TrendingUp, Power, BarChart3, Users } from "lucide-react";
 import { questions, results } from "@/data/questions";
 import hronLogo from "@assets/HR_ON_logo_IceBlue1000px_1763730225207.png";
 
@@ -18,8 +16,6 @@ export default function OnboardingMaturityCheck() {
   const handleAnswer = (points: number) => {
     if (typeof currentStep === "number") {
       setAnswers(prev => ({ ...prev, [currentStep]: points }));
-      
-      // Small haptic/visual feedback could go here
     }
   };
 
@@ -58,7 +54,7 @@ export default function OnboardingMaturityCheck() {
   const triggerConfetti = () => {
     const duration = 3 * 1000;
     const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0, colors: ['#2F80ED', '#0B1E3D', '#ffffff'] };
 
     const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
@@ -76,302 +72,291 @@ export default function OnboardingMaturityCheck() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-slate-50/50 relative overflow-hidden font-sans text-slate-900">
+    <div className="min-h-screen w-full bg-white relative overflow-hidden font-sans text-slate-900 flex flex-col">
       
-      {/* Fun Background Blobs */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-blue-200/30 rounded-full blur-3xl blob-animation" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-indigo-200/30 rounded-full blur-3xl blob-animation-delay" />
-        <div className="absolute top-[40%] left-[60%] w-[20vw] h-[20vw] bg-cyan-100/40 rounded-full blur-3xl blob-animation" />
+      {/* Abstract Brand Background Elements */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-10">
+        <div className="absolute -top-[20%] -right-[20%] w-[80vw] h-[80vw] border-[100px] border-blue-600 rounded-full opacity-20" />
+        <div className="absolute top-[40%] -left-[10%] w-[40vw] h-[40vw] bg-blue-100 rounded-full blur-3xl" />
       </div>
 
-      {/* Header */}
-      <header className="w-full bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/50 shadow-sm">
-        <div className="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
-          <motion.img 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            src={hronLogo} 
-            alt="HR-ON Logo" 
-            className="h-12 w-auto object-contain" 
-          />
-          {typeof currentStep === "number" && (
-             <motion.div 
-               initial={{ opacity: 0, scale: 0.8 }}
-               animate={{ opacity: 1, scale: 1 }}
-               className="flex items-center gap-2 px-4 py-1.5 bg-blue-50 rounded-full border border-blue-100"
-             >
-               <span className="text-sm font-bold text-primary">
-                 {currentStep + 1}
-               </span>
-               <span className="text-xs text-slate-400 font-medium uppercase tracking-wider">
-                 af {questions.length}
-               </span>
-             </motion.div>
-          )}
-        </div>
+      {/* Minimalist Header */}
+      <header className="w-full px-8 py-6 flex justify-between items-center z-50 relative">
+        <img src={hronLogo} alt="HR-ON" className="h-10 w-auto" />
+        {typeof currentStep === "number" && (
+          <div className="text-sm font-bold text-blue-900 tracking-widest uppercase">
+            Spørgsmål {currentStep + 1} / {questions.length}
+          </div>
+        )}
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center p-6 relative z-10">
-        <div className="max-w-3xl w-full py-8">
-          <AnimatePresence mode="wait">
-            {currentStep === "start" && (
-              <motion.div
-                key="start"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="text-center space-y-10"
-              >
-                <div className="relative inline-block">
-                  <motion.div 
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                    className="absolute -top-6 -right-6 text-4xl"
-                  >
-                    👋
-                  </motion.div>
-                  <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                    Onboarding <br/>
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">
-                      Maturity Check
-                    </span>
-                  </h1>
-                </div>
-                
-                <p className="text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto leading-relaxed font-light">
-                  Hvor stærkt står jeres onboarding? <br/>
-                  Tag testen på 2 minutter og få konkrete svar.
-                </p>
-
+      <main className="flex-1 flex flex-col relative z-10 container mx-auto px-6 max-w-7xl">
+        <AnimatePresence mode="wait">
+          
+          {/* --- CUSTOM START SCREEN --- */}
+          {currentStep === "start" && (
+            <motion.div
+              key="start"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, x: -100 }}
+              className="flex-1 grid lg:grid-cols-2 gap-12 items-center py-12"
+            >
+              <div className="space-y-10 max-w-2xl">
                 <motion.div 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <span className="inline-block py-1 px-3 rounded bg-blue-50 text-blue-600 text-xs font-bold tracking-[0.2em] uppercase mb-6">
+                    HR Maturity Tools
+                  </span>
+                  <h1 className="text-6xl md:text-7xl font-black text-slate-900 tracking-tight leading-[0.95]">
+                    Er jeres <br/>
+                    <span className="text-blue-600">onboarding</span> <br/>
+                    gearet til fremtiden?
+                  </h1>
+                </motion.div>
+                
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-xl text-slate-600 leading-relaxed max-w-lg border-l-4 border-blue-200 pl-6"
+                >
+                  Tag vores 2-minutters maturity check og få en dybdegående analyse af jeres styrker og potentialer.
+                </motion.p>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="flex flex-wrap gap-4"
                 >
                   <Button 
                     onClick={startQuiz} 
-                    size="lg" 
-                    className="h-16 px-12 text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-full shadow-xl shadow-blue-500/20 transition-all"
+                    className="h-16 px-10 text-lg bg-blue-600 hover:bg-blue-700 text-white rounded-none border-2 border-transparent hover:border-blue-800 transition-all shadow-xl shadow-blue-600/20"
                   >
-                    Start testen nu <ArrowRight className="ml-3 w-6 h-6" />
+                    Start testen nu <ArrowRight className="ml-3 w-5 h-5" />
                   </Button>
+                  
+                  <div className="flex items-center gap-4 px-6 text-sm font-medium text-slate-500">
+                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-blue-500"/> Gratis</span>
+                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-blue-500"/> Uforpligtende</span>
+                  </div>
                 </motion.div>
-                
-                <div className="pt-8 flex justify-center gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
-                   {/* Playful icons representing HR concepts */}
-                   <Sparkles className="w-8 h-8" />
-                   <TrendingUp className="w-8 h-8" />
-                   <CheckCircle2 className="w-8 h-8" />
+              </div>
+
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="relative hidden lg:flex justify-center items-center"
+              >
+                {/* Abstract Graphic representing "Maturity" */}
+                <div className="relative w-[500px] h-[500px]">
+                  <div className="absolute inset-0 border border-slate-200 rounded-full animate-[spin_60s_linear_infinite]" />
+                  <div className="absolute inset-[50px] border border-slate-200 rounded-full animate-[spin_40s_linear_infinite_reverse]" />
+                  <div className="absolute inset-[100px] border border-blue-100 rounded-full animate-[spin_30s_linear_infinite]" />
+                  
+                  {/* Floating Stats Cards */}
+                  <motion.div 
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                    className="absolute top-20 right-0 bg-white p-6 shadow-2xl shadow-blue-900/10 max-w-xs z-20 border-l-4 border-blue-500"
+                  >
+                    <BarChart3 className="w-8 h-8 text-blue-600 mb-3" />
+                    <h3 className="font-bold text-slate-900">Datadrevet Indsigt</h3>
+                    <p className="text-sm text-slate-500 mt-1">Få konkrete tal på jeres HR-indsats.</p>
+                  </motion.div>
+
+                  <motion.div 
+                    animate={{ y: [0, 10, 0] }}
+                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+                    className="absolute bottom-20 left-0 bg-white p-6 shadow-2xl shadow-blue-900/10 max-w-xs z-20 border-l-4 border-indigo-500"
+                  >
+                    <Users className="w-8 h-8 text-indigo-600 mb-3" />
+                    <h3 className="font-bold text-slate-900">Medarbejderrejse</h3>
+                    <p className="text-sm text-slate-500 mt-1">Optimér oplevelsen fra dag 1.</p>
+                  </motion.div>
+                  
+                  {/* Center Power Icon */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-32 h-32 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-2xl shadow-blue-600/40">
+                      <Power className="w-16 h-16" strokeWidth={3} />
+                    </div>
+                  </div>
                 </div>
               </motion.div>
-            )}
+            </motion.div>
+          )}
 
-            {typeof currentStep === "number" && (
-              <motion.div
-                key="quiz"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="w-full"
-              >
-                {/* Segmented Progress Bar */}
-                <div className="flex gap-1 mb-12">
-                  {questions.map((_, idx) => (
-                    <motion.div
+          {/* --- CUSTOM QUIZ SCREEN --- */}
+          {typeof currentStep === "number" && (
+            <motion.div
+              key="quiz"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="flex-1 flex flex-col justify-center max-w-5xl mx-auto w-full py-8"
+            >
+              <div className="grid lg:grid-cols-12 gap-12">
+                {/* Question Side */}
+                <div className="lg:col-span-5 space-y-8">
+                  <div className="w-12 h-12 bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xl rounded-full mb-6">
+                    {currentStep + 1}
+                  </div>
+                  <h2 className="text-4xl font-bold text-slate-900 leading-tight">
+                    {questions[currentStep].text}
+                  </h2>
+                  <div className="h-1 w-24 bg-blue-600" />
+                  <p className="text-slate-500 uppercase tracking-wider font-bold text-sm">
+                    {questions[currentStep].category}
+                  </p>
+                </div>
+
+                {/* Options Side */}
+                <div className="lg:col-span-7 grid gap-4 content-center">
+                  {questions[currentStep].options.map((option, idx) => (
+                    <motion.button
                       key={idx}
-                      initial={{ scaleY: 1 }}
-                      animate={{ 
-                        scaleY: idx === currentStep ? 1.5 : 1,
-                        backgroundColor: idx <= currentStep ? "var(--color-primary)" : "#e2e8f0"
-                      }}
-                      className={`h-1.5 flex-1 rounded-full transition-colors duration-300`}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      onClick={() => handleAnswer(option.points)}
+                      className={`
+                        group relative w-full text-left p-6 transition-all duration-200 border-l-4 
+                        ${answers[currentStep] === option.points 
+                          ? "bg-slate-900 border-blue-500 text-white shadow-xl scale-[1.02]" 
+                          : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-blue-300 hover:text-slate-900"}
+                      `}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-lg font-medium pr-8">{option.text}</span>
+                        {answers[currentStep] === option.points && (
+                          <motion.div layoutId="check">
+                             <CheckCircle2 className="w-6 h-6 text-blue-500" />
+                          </motion.div>
+                        )}
+                      </div>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center mt-16 border-t border-slate-100 pt-8">
+                <button 
+                  onClick={prevStep} 
+                  disabled={currentStep === 0}
+                  className="flex items-center text-slate-400 hover:text-slate-900 disabled:opacity-30 transition-colors font-medium"
+                >
+                  <ArrowLeft className="mr-2 w-4 h-4" /> Forrige spørgsmål
+                </button>
+
+                {/* Custom Progress Indicator */}
+                <div className="flex gap-1">
+                  {questions.map((_, idx) => (
+                    <div 
+                      key={idx}
+                      className={`w-2 h-2 rounded-full transition-colors ${idx <= currentStep ? 'bg-blue-600' : 'bg-slate-200'}`}
                     />
                   ))}
                 </div>
 
-                <div className="space-y-8">
-                  <div className="space-y-3 text-center md:text-left">
-                    <motion.span 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="inline-block px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-bold text-xs tracking-widest uppercase"
-                    >
-                      {questions[currentStep].category}
-                    </motion.span>
-                    <motion.h2 
-                      key={currentStep}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 }}
-                      className="text-3xl md:text-4xl font-bold text-slate-900 leading-tight"
-                    >
-                      {questions[currentStep].text}
-                    </motion.h2>
+                <button 
+                  onClick={nextStep} 
+                  disabled={answers[currentStep] === undefined}
+                  className={`
+                    flex items-center font-bold transition-all
+                    ${answers[currentStep] === undefined 
+                      ? "text-slate-300 cursor-not-allowed" 
+                      : "text-blue-600 hover:text-blue-800 hover:translate-x-1"}
+                  `}
+                >
+                  Næste trin <ArrowRight className="ml-2 w-5 h-5" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* --- CUSTOM RESULT SCREEN --- */}
+          {currentStep === "result" && (
+            <motion.div
+              key="result"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex-1 py-12 max-w-6xl mx-auto w-full"
+            >
+              <div className="grid lg:grid-cols-12 gap-8 h-full">
+                {/* Left Column: Score & Title */}
+                <div className="lg:col-span-4 bg-slate-900 text-white p-10 flex flex-col justify-between relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600 rounded-full blur-[100px] opacity-20 -translate-y-1/2 translate-x-1/2" />
+                  
+                  <div>
+                    <p className="text-blue-400 font-bold tracking-widest uppercase text-sm mb-2">Din Score</p>
+                    <div className="text-8xl font-black text-white mb-2 tracking-tighter">
+                      {calculateScore()}<span className="text-4xl text-slate-500 font-normal">/30</span>
+                    </div>
                   </div>
 
-                  <div className="grid gap-4 mt-8">
-                    {questions[currentStep].options.map((option, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 + idx * 0.1 }}
-                        onClick={() => handleAnswer(option.points)}
-                        onMouseEnter={() => setHoveredOption(idx)}
-                        onMouseLeave={() => setHoveredOption(null)}
-                        className={`
-                          group relative p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 flex items-center gap-5
-                          ${answers[currentStep] === option.points 
-                            ? "border-blue-500 bg-blue-50/80 shadow-lg shadow-blue-500/10 scale-[1.02]" 
-                            : "border-white bg-white/80 shadow-sm hover:border-blue-200 hover:shadow-md hover:-translate-y-1"}
-                        `}
-                      >
-                        <div className={`
-                          w-8 h-8 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all duration-300
-                          ${answers[currentStep] === option.points 
-                            ? "border-blue-500 bg-blue-500 text-white scale-110" 
-                            : "border-slate-200 bg-slate-50 group-hover:border-blue-300"}
-                        `}>
-                          {answers[currentStep] === option.points && (
-                            <motion.div 
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              className="w-2.5 h-2.5 bg-white rounded-full" 
-                            />
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <p className={`text-lg ${answers[currentStep] === option.points ? "text-blue-900 font-semibold" : "text-slate-700 font-medium group-hover:text-slate-900"}`}>
-                            {option.text}
-                          </p>
-                        </div>
-                        
-                        {/* Fun hover indicator */}
-                        <AnimatePresence>
-                          {answers[currentStep] === option.points && (
-                            <motion.div
-                              initial={{ opacity: 0, scale: 0, rotate: -20 }}
-                              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                              exit={{ opacity: 0, scale: 0 }}
-                              className="absolute right-4 -top-3 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg"
-                            >
-                              Valgt!
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </motion.div>
-                    ))}
+                  <div className="space-y-6 relative z-10">
+                    <div className="h-1 w-20 bg-blue-500" />
+                    <h2 className="text-4xl font-bold leading-tight">
+                      {getResult().title}
+                    </h2>
+                    <p className="text-slate-400 leading-relaxed">
+                      {getResult().description}
+                    </p>
                   </div>
 
-                  <div className="flex justify-between items-center pt-8">
-                    <Button 
-                      variant="ghost" 
-                      onClick={prevStep} 
-                      disabled={currentStep === 0}
-                      className="text-slate-400 hover:text-slate-900 hover:bg-white/50 -ml-4"
-                    >
-                      <ArrowLeft className="mr-2 w-4 h-4" /> Tilbage
-                    </Button>
-                    <Button 
-                      onClick={nextStep} 
-                      disabled={answers[currentStep] === undefined}
-                      className={`
-                        h-12 px-8 rounded-full font-semibold text-white transition-all duration-300
-                        ${answers[currentStep] === undefined 
-                          ? "bg-slate-200 text-slate-400 cursor-not-allowed" 
-                          : "bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5"}
-                      `}
-                    >
-                      Næste <ArrowRight className="ml-2 w-4 h-4" />
+                  <div className="pt-12">
+                    <Button onClick={resetQuiz} variant="outline" className="w-full border-slate-700 text-white hover:bg-slate-800 hover:text-white">
+                      <RefreshCcw className="mr-2 w-4 h-4" /> Tag testen igen
                     </Button>
                   </div>
                 </div>
-              </motion.div>
-            )}
 
-            {currentStep === "result" && (
-              <motion.div
-                key="result"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="space-y-8 max-w-4xl mx-auto"
-              >
-                <div className="text-center space-y-6 py-8">
-                   <motion.div 
-                     initial={{ scale: 0 }}
-                     animate={{ scale: 1 }}
-                     transition={{ type: "spring", delay: 0.2 }}
-                     className="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-cyan-400 rounded-3xl rotate-3 flex items-center justify-center shadow-2xl shadow-blue-500/30 text-white mb-6"
-                   >
-                     <span className="text-4xl font-bold">{calculateScore()}</span>
-                   </motion.div>
-                   
-                   <div className="space-y-2">
-                     <p className="text-sm font-bold text-blue-600 uppercase tracking-widest">Dit Resultat</p>
-                     <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight">{getResult().title}</h2>
-                   </div>
-                </div>
-
-                <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 md:p-12 border border-white shadow-xl relative overflow-hidden">
-                   <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-600" />
-                   
-                   <p className="text-xl md:text-2xl text-slate-700 leading-relaxed text-center font-medium mb-12">
-                     {getResult().description}
-                   </p>
-
-                   <div className="grid gap-6 md:grid-cols-3">
+                {/* Right Column: Analysis & CTA */}
+                <div className="lg:col-span-8 bg-slate-50 p-10 flex flex-col gap-8">
+                  <div className="grid md:grid-cols-3 gap-6">
                     {getResult().bullets.map((bullet, idx) => (
                       <motion.div 
                         key={idx}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4 + idx * 0.2 }}
-                        className="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow duration-300"
+                        transition={{ delay: 0.2 + idx * 0.1 }}
+                        className="bg-white p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
                       >
                         <div className="mb-4">
-                          {bullet.type === "strength" && <div className="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center text-green-600 mb-3 rotate-3"><CheckCircle2 className="w-6 h-6" /></div>}
-                          {bullet.type === "risk" && <div className="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center text-red-500 mb-3 -rotate-3"><AlertCircle className="w-6 h-6" /></div>}
-                          {bullet.type === "opportunity" && <div className="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-500 mb-3 rotate-2"><TrendingUp className="w-6 h-6" /></div>}
+                          {bullet.type === "strength" && <CheckCircle2 className="w-8 h-8 text-green-500 mb-2" />}
+                          {bullet.type === "risk" && <AlertCircle className="w-8 h-8 text-red-500 mb-2" />}
+                          {bullet.type === "opportunity" && <TrendingUp className="w-8 h-8 text-amber-500 mb-2" />}
                           
-                          <h3 className="font-bold text-slate-900 text-lg">
+                          <h3 className="font-bold text-slate-900 text-lg capitalize">
                             {bullet.type === "strength" ? "Styrke" : bullet.type === "risk" ? "Risiko" : "Mulighed"}
                           </h3>
                         </div>
-                        <p className="text-slate-600 leading-relaxed">{bullet.text}</p>
+                        <p className="text-slate-600 text-sm leading-relaxed">{bullet.text}</p>
                       </motion.div>
                     ))}
                   </div>
-                </div>
 
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1 }}
-                  className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl p-8 md:p-12 text-white text-center relative overflow-hidden shadow-2xl shadow-blue-900/20"
-                >
-                   {/* Background pattern */}
-                   <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
-                   
-                   <div className="relative z-10 max-w-2xl mx-auto space-y-8">
-                     <h3 className="text-3xl font-bold">Klar til at tage næste skridt? 🚀</h3>
-                     <p className="text-blue-100 text-lg font-medium leading-relaxed">
-                       HR-ON Boarding samler hele rejsen ét sted. <br/>Få styr på planer, opgaver og opfølgning med det samme.
-                     </p>
-                     <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                       <Button onClick={resetQuiz} variant="outline" className="h-14 px-8 rounded-full bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white backdrop-blur-sm">
-                         <RefreshCcw className="mr-2 w-5 h-5" /> Prøv igen
-                       </Button>
-                       <Button className="h-14 px-8 rounded-full bg-white text-blue-700 hover:bg-blue-50 font-bold shadow-lg">
-                         Læs mere om HR-ON Boarding
-                       </Button>
-                     </div>
-                   </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+                  <div className="mt-auto bg-blue-50 border border-blue-100 p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div>
+                      <h3 className="font-bold text-blue-900 text-xl mb-2">Klar til at løfte jeres onboarding?</h3>
+                      <p className="text-blue-700/80 max-w-md">
+                        HR-ON Boarding samler hele rejsen ét sted. Få styr på planer, opgaver og opfølgning.
+                      </p>
+                    </div>
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white h-12 px-8 whitespace-nowrap shadow-lg shadow-blue-600/20">
+                      Prøv HR-ON Boarding
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
     </div>
   );
