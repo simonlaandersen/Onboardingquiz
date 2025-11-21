@@ -289,74 +289,116 @@ export default function OnboardingMaturityCheck() {
           {currentStep === "result" && (
             <motion.div
               key="result"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex-1 py-12 max-w-6xl mx-auto w-full"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex-1 py-8 max-w-4xl mx-auto w-full"
             >
-              <div className="grid lg:grid-cols-12 gap-8 h-full">
-                {/* Left Column: Score & Title */}
-                <div className="lg:col-span-4 bg-slate-900 text-white p-10 flex flex-col justify-between relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600 rounded-full blur-[100px] opacity-20 -translate-y-1/2 translate-x-1/2" />
+              <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100">
+                {/* Top Banner with Score */}
+                <div className="relative bg-slate-900 text-white p-12 text-center overflow-hidden">
+                  {/* Background Effects */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[80px] -translate-y-1/2 pointer-events-none" />
+                  <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[60px] translate-y-1/2 pointer-events-none" />
                   
-                  <div>
-                    <p className="text-blue-400 font-bold tracking-widest uppercase text-sm mb-2">Din Score</p>
-                    <div className="text-8xl font-black text-white mb-2 tracking-tighter">
-                      {calculateScore()}<span className="text-4xl text-slate-500 font-normal">/30</span>
+                  <div className="relative z-10 flex flex-col items-center">
+                    <p className="text-blue-300 font-bold tracking-[0.2em] uppercase text-xs mb-6">Din Onboarding Maturity Score</p>
+                    
+                    <div className="relative mb-8">
+                      <svg className="w-48 h-48 transform -rotate-90">
+                        <circle
+                          cx="96"
+                          cy="96"
+                          r="88"
+                          fill="transparent"
+                          stroke="#1e293b"
+                          strokeWidth="12"
+                        />
+                        <motion.circle
+                          cx="96"
+                          cy="96"
+                          r="88"
+                          fill="transparent"
+                          stroke="#3b82f6" 
+                          strokeWidth="12"
+                          strokeDasharray={2 * Math.PI * 88}
+                          initial={{ strokeDashoffset: 2 * Math.PI * 88 }}
+                          animate={{ strokeDashoffset: 2 * Math.PI * 88 * (1 - calculateScore() / 30) }}
+                          transition={{ duration: 1.5, ease: "easeOut" }}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center flex-col">
+                        <span className="text-5xl font-black text-white tracking-tight">{calculateScore()}</span>
+                        <span className="text-slate-400 font-medium text-sm">af 30</span>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="space-y-6 relative z-10">
-                    <div className="h-1 w-20 bg-blue-500" />
-                    <h2 className="text-4xl font-bold leading-tight">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-4">
                       {getResult().title}
                     </h2>
-                    <p className="text-slate-400 leading-relaxed">
+                    <p className="text-slate-300 max-w-xl mx-auto leading-relaxed text-lg">
                       {getResult().description}
                     </p>
                   </div>
-
-                  <div className="pt-12">
-                    <Button onClick={resetQuiz} variant="outline" className="w-full border-slate-700 text-white hover:bg-slate-800 hover:text-white">
-                      <RefreshCcw className="mr-2 w-4 h-4" /> Tag testen igen
-                    </Button>
-                  </div>
                 </div>
 
-                {/* Right Column: Analysis & CTA */}
-                <div className="lg:col-span-8 bg-slate-50 p-10 flex flex-col gap-8">
-                  <div className="grid md:grid-cols-3 gap-6">
+                {/* Detailed Insights */}
+                <div className="p-8 md:p-12 bg-white">
+                  <div className="grid md:grid-cols-3 gap-6 mb-12">
                     {getResult().bullets.map((bullet, idx) => (
                       <motion.div 
                         key={idx}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 + idx * 0.1 }}
-                        className="bg-white p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+                        transition={{ delay: 0.5 + idx * 0.1 }}
+                        className="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group"
                       >
-                        <div className="mb-4">
-                          {bullet.type === "strength" && <CheckCircle2 className="w-8 h-8 text-green-500 mb-2" />}
-                          {bullet.type === "risk" && <AlertCircle className="w-8 h-8 text-red-500 mb-2" />}
-                          {bullet.type === "opportunity" && <TrendingUp className="w-8 h-8 text-amber-500 mb-2" />}
-                          
-                          <h3 className="font-bold text-slate-900 text-lg capitalize">
+                        <div className="mb-4 flex items-center gap-3">
+                          <div className={`p-2.5 rounded-xl ${
+                            bullet.type === "strength" ? "bg-green-100 text-green-600" :
+                            bullet.type === "risk" ? "bg-red-100 text-red-600" :
+                            "bg-amber-100 text-amber-600"
+                          }`}>
+                            {bullet.type === "strength" && <CheckCircle2 className="w-5 h-5" />}
+                            {bullet.type === "risk" && <AlertCircle className="w-5 h-5" />}
+                            {bullet.type === "opportunity" && <TrendingUp className="w-5 h-5" />}
+                          </div>
+                          <span className="font-bold text-slate-900 text-sm uppercase tracking-wider">
                             {bullet.type === "strength" ? "Styrke" : bullet.type === "risk" ? "Risiko" : "Mulighed"}
-                          </h3>
+                          </span>
                         </div>
-                        <p className="text-slate-600 text-sm leading-relaxed">{bullet.text}</p>
+                        <p className="text-slate-600 leading-relaxed font-medium">
+                          {bullet.text}
+                        </p>
                       </motion.div>
                     ))}
                   </div>
 
-                  <div className="mt-auto bg-blue-50 border border-blue-100 p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div>
-                      <h3 className="font-bold text-blue-900 text-xl mb-2">Klar til at løfte jeres onboarding?</h3>
-                      <p className="text-blue-700/80 max-w-md">
-                        HR-ON Boarding samler hele rejsen ét sted. Få styr på planer, opgaver og opfølgning.
-                      </p>
+                  {/* CTA Section */}
+                  <div className="bg-blue-50 rounded-2xl p-8 border border-blue-100 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div className="flex items-start gap-5">
+                      <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-600/20 shrink-0">
+                        <Power className="w-6 h-6" strokeWidth={3} />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-900 mb-2">Tag næste skridt med HR-ON</h3>
+                        <p className="text-slate-600 max-w-md">
+                          Saml hele jeres onboarding ét sted. Få styr på planer, opgaver og opfølgning med HR-ON Boarding.
+                        </p>
+                      </div>
                     </div>
-                    <Button className="bg-blue-600 hover:bg-blue-700 text-white h-12 px-8 whitespace-nowrap shadow-lg shadow-blue-600/20">
-                      Prøv HR-ON Boarding
-                    </Button>
+                    <div className="flex flex-col gap-3 w-full md:w-auto">
+                      <Button className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 font-semibold text-base w-full md:w-auto">
+                        Læs mere om HR-ON Boarding
+                      </Button>
+                      <Button 
+                        onClick={resetQuiz} 
+                        variant="ghost" 
+                        className="text-slate-500 hover:text-slate-900 w-full md:w-auto"
+                      >
+                        <RefreshCcw className="mr-2 w-4 h-4" /> Tag testen igen
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
