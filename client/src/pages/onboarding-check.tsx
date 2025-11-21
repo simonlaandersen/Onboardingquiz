@@ -294,8 +294,7 @@ export default function OnboardingMaturityCheck() {
                 <button 
                   onClick={prevStep} 
                   disabled={currentStep === 0}
-                  className="flex items-center disabled:opacity-30 transition-colors font-medium"
-                  style={{ color: "rgb(148, 163, 184)", hover: { color: config?.secondaryColor || "#0B1E3D" } }}
+                  className="flex items-center text-slate-400 hover:text-slate-900 disabled:opacity-30 transition-colors font-medium"
                 >
                   <ArrowLeft className="mr-2 w-4 h-4" /> Forrige spørgsmål
                 </button>
