@@ -24,40 +24,43 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
   
-  --radius: 0.75rem;
+  --radius: 0.5rem;
 }
 
 :root {
-  /* Professional HR SaaS Theme - Blue & Slate */
-  --background: 210 40% 98%; /* Slate 50 */
-  --foreground: 222 47% 11%; /* Slate 900 */
+  /* HR-ON Brand Colors */
+  /* Ice Blue approx #3b82f6 / #2F80ED */
+  /* Dark Navy approx #0B1E3D */
+  
+  --background: 0 0% 100%; /* Pure White */
+  --foreground: 218 40% 15%; /* Dark Navy Text */
 
   --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
+  --card-foreground: 218 40% 15%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
+  --popover-foreground: 218 40% 15%;
 
-  --primary: 221 83% 53%; /* Blue 600 */
-  --primary-foreground: 210 40% 98%;
+  --primary: 217 90% 61%; /* Bright Ice Blue from logo */
+  --primary-foreground: 0 0% 100%;
 
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222 47% 11%;
+  --secondary: 210 40% 98%;
+  --secondary-foreground: 218 40% 15%;
 
   --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
+  --muted-foreground: 215 20% 45%;
 
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222 47% 11%;
+  --accent: 210 40% 98%;
+  --accent-foreground: 218 40% 15%;
 
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
 
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 221 83% 53%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 217 90% 61%;
 
-  --radius: 0.75rem;
+  --radius: 0.5rem;
 }
 
 @layer base {
