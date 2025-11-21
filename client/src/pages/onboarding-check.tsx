@@ -150,11 +150,6 @@ export default function OnboardingMaturityCheck() {
                   >
                     Start testen nu <ArrowRight className="ml-3 w-5 h-5" />
                   </Button>
-                  
-                  <div className="flex items-center gap-4 px-6 text-sm font-medium text-slate-500">
-                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-blue-500"/> Gratis</span>
-                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-blue-500"/> Uforpligtende</span>
-                  </div>
                 </motion.div>
               </div>
 
