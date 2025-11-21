@@ -1,0 +1,177 @@
+Du er en senior frontend udvikler. Byg en lille, professionel single page web app der hedder "Onboarding Maturity Check".
+
+Formål:
+- En kort, seriøs quiz til HR og ledere.
+- Brugeren svarer på 10 spørgsmål om deres onboarding.
+- Til sidst får de et resultat: et modenhedsniveau + kort beskrivelse + 3 bullets med indsigter.
+
+Teknisk:
+- Brug kun HTML, CSS og vanilla JavaScript.
+- Opret tre filer: index.html, style.css og script.js og bind dem korrekt sammen.
+- Alt skal køre i browseren, ingen backend.
+- Sproget i UI skal være dansk.
+- Design: ren, lys HR SaaS stil. Hvid baggrund, blødt kort, blå accentfarve, god læsbarhed, responsivt.
+- Appen skal virke godt både på mobil og desktop.
+
+Layout og flow:
+1. Startskærm:
+   - Overskrift: "Onboarding Maturity Check"
+   - Kort tekst: "Svar på 10 spørgsmål og få et hurtigt reality check på, hvor moden jeres onboarding er."
+   - En primær knap: "Start testen".
+2. Quizflow:
+   - Vis ét spørgsmål ad gangen i et kort i midten af skærmen.
+   - Vis en lille progressionstekst, fx "Spørgsmål 3 af 10".
+   - Hvert spørgsmål har 4 svarmuligheder (radio buttons).
+   - "Næste" knap nederst, som først bliver aktiv når et svar er valgt.
+   - En "Tilbage" knap så brugeren kan gå til forrige spørgsmål og ændre svar.
+3. Resultatskærm:
+   - Når alle 10 spørgsmål er besvaret, beregner du en score og viser:
+     - Et modenhedsniveau (en af 4 kategorier).
+     - En kort beskrivelse.
+     - 3 bullet points med styrker/risici/muligheder.
+   - Under resultatet en diskret tekstlinje: 
+     "HR-ON Boarding kan hjælpe jer med at samle onboardingplaner, opgaver og opfølgning ét sted."
+   - En knap: "Start forfra" der nulstiller quizzen.
+
+Scoring:
+- Der er 10 spørgsmål.
+- Hvert spørgsmål har svar A, B, C, D.
+- A er mest moden, D mindst moden.
+- Giv A 3 point, B 2 point, C 1 point, D 0 point.
+- Læg alle point sammen til sidst.
+- Brug følgende niveauer baseret på den samlede score (maks 30 point):
+  - 0 til 10 point: "Ad hoc onboarding"
+  - 11 til 18 point: "Grundlæggende onboarding"
+  - 19 til 24 point: "Struktureret onboarding"
+  - 25 til 30 point: "Strategisk onboarding"
+
+Spørgsmål og svar (hårdkod dem i JavaScript som et array af objekter):
+
+1) Plan og struktur
+Spørgsmål: "Har I en standardiseret plan for de første 30 dage for nye medarbejdere?"
+Svar:
+A: "Ja, for alle relevante stillinger og vi opdaterer den jævnligt."
+B: "Ja, for de fleste nøglestillinger."
+C: "Kun for enkelte roller."
+D: "Nej, det løses fra gang til gang."
+
+2) Kultur og værdier
+Spørgsmål: "Hvordan introducerer I kultur og værdier i onboardingforløbet?"
+Svar:
+A: "Der er et struktureret forløb med konkrete aktiviteter og eksempler."
+B: "Der er en præsentation eller et oplæg, men ikke meget mere."
+C: "Det sker primært uformelt i hverdagen."
+D: "Vi har ikke en klar tilgang til det."
+
+3) Netværk og relationer
+Spørgsmål: "Hvordan sikrer I, at nye medarbejdere får opbygget et relevant internt netværk?"
+Svar:
+A: "Vi har planlagte møder med nøglepersoner og tværgående kolleger."
+B: "Vi introducerer dem til nærmeste team og enkelte nøglepersoner."
+C: "Det forventes at ske naturligt over tid."
+D: "Vi har ikke fokus på det."
+
+4) Rolle- og ansvarsfordeling
+Spørgsmål: "Hvor tydeligt er ansvaret for onboarding fordelt mellem HR, leder og kolleger?"
+Svar:
+A: "Meget tydeligt og dokumenteret."
+B: "Nogenlunde tydeligt, men ikke formelt beskrevet."
+C: "Det er primært implicit og afhænger af den enkelte leder."
+D: "Det er uklart, hvem der har ansvaret."
+
+5) Opfølgning og måling
+Spørgsmål: "Evaluerer I systematisk, om onboardingforløbet har været en succes?"
+Svar:
+A: "Ja, via faste målinger og samtaler på bestemte tidspunkter."
+B: "Ja, men mere ad hoc og uregelmæssigt."
+C: "Kun hvis der opstår problemer."
+D: "Nej, vi evaluerer ikke struktureret."
+
+6) Forberedelse før første dag
+Spørgsmål: "Hvor meget er på plads før første arbejdsdag for en ny medarbejder?"
+Svar:
+A: "Udstyr, systemadgang, program og velkomstmateriale er klart."
+B: "Det meste er klar, men enkelte ting mangler ofte."
+C: "Noget er klar, men mange ting ordnes først på dagen."
+D: "Det meste bliver ordnet, efter medarbejderen er startet."
+
+7) Digital støtte
+Spørgsmål: "Hvordan understøtter I onboarding digitalt i dag?"
+Svar:
+A: "Vi bruger et dedikeret onboardingværktøj med opgaver, planer og opfølgning."
+B: "Vi bruger HR-system, intranet eller andre værktøjer med simple skabeloner."
+C: "Vi bruger primært mails, dokumenter og regneark."
+D: "Der er ingen samlet digital løsning."
+
+8) Ledelsesinvolvering
+Spørgsmål: "Hvor tydeligt er lederens rolle i onboarding?"
+Svar:
+A: "Lederens rolle er klart defineret med konkrete opgaver og touchpoints."
+B: "Lederen ved nogenlunde hvad der forventes, men uden fast struktur."
+C: "Det afhænger meget af den enkelte leder."
+D: "Der er ingen fælles forventninger til lederens rolle."
+
+9) Varighed og helhed
+Spørgsmål: "Hvor længe betragter I onboardingforløbet som aktivt?"
+Svar:
+A: "Vi har en tydelig plan der strækker sig mindst 3 måneder."
+B: "Vi har en plan for 2 til 4 uger."
+C: "Vi fokuserer mest på første uge."
+D: "Onboarding er primært første dag."
+
+10) Løbende forbedring
+Spørgsmål: "Hvordan arbejder I med at forbedre jeres onboarding over tid?"
+Svar:
+A: "Vi bruger data og feedback til at justere programmet løbende."
+B: "Vi justerer indimellem baseret på oplevelser og enkeltstående input."
+C: "Vi ændrer kun noget hvis der har været en meget dårlig oplevelse."
+D: "Onboardingforløbet har stort set været det samme i flere år."
+
+Resultattekster (vis dem på dansk på resultatsiden):
+
+1) Ad hoc onboarding (0 til 10 point)
+Overskrift: "Jeres onboarding er primært ad hoc"
+Kort tekst:
+"Onboarding afhænger i høj grad af den enkelte leder og situation. Nye medarbejdere kan få meget forskellige oplevelser, og vigtige elementer risikerer at blive glemt."
+3 bullets:
+- Styrke: I kan tilpasse jer hurtigt fra gang til gang.
+- Risiko: Uensartet kvalitet og større risiko for dårlige oplevelser.
+- Mulighed: Ved at samle onboarding i en enkel struktur kan I hurtigt løfte niveauet.
+
+2) Grundlæggende onboarding (11 til 18 point)
+Overskrift: "Jeres onboarding har et grundlæggende fundament"
+Kort tekst:
+"I har flere gode elementer i onboarding, men de er ikke fuldt ud standardiseret og skaleret. Oplevelsen kan stadig variere alt efter rolle og leder."
+3 bullets:
+- Styrke: Nye medarbejdere får typisk en fornuftig start.
+- Risiko: Manglende konsistens og begrænset opfølgning.
+- Mulighed: Med en samlet plan og digitale værktøjer kan I skabe en mere ensartet oplevelse.
+
+3) Struktureret onboarding (19 til 24 point)
+Overskrift: "Jeres onboarding er struktureret"
+Kort tekst:
+"I har et solidt fundament med planer, faste elementer og tydelige roller. De største muligheder ligger i at gøre onboarding mere datadrevet og let at skalere på tværs af organisationen."
+3 bullets:
+- Styrke: Klare rammer og genkendelige forløb.
+- Risiko: Afhængighed af enkelte nøglepersoner og manuelle processer.
+- Mulighed: Ved at samle onboarding digitalt kan I spare tid og få bedre overblik.
+
+4) Strategisk onboarding (25 til 30 point)
+Overskrift: "Jeres onboarding er på et strategisk niveau"
+Kort tekst:
+"Onboarding er integreret i jeres måde at drive forretning og HR på. I arbejder struktureret med forløb, roller og opfølgning og bruger viden til at forbedre oplevelsen løbende."
+3 bullets:
+- Styrke: En stærk, konsistent oplevelse for nye medarbejdere.
+- Risiko: At kompleksitet og vedligeholdelse kan vokse over tid.
+- Mulighed: I kan bruge data til at koble onboarding endnu tættere til performance og fastholdelse.
+
+Implementering:
+- Definér alle spørgsmål, svar og scoring i et JavaScript array.
+- Byg funktioner til:
+  - at vise det aktuelle spørgsmål
+  - at gemme brugerens svar
+  - at navigere frem og tilbage
+  - at beregne total score til sidst
+  - at vælge det rigtige resultatniveau og vise den tilsvarende tekst og bullets.
+
+Gør koden overskuelig, brug kommentare på engelsk eller dansk, og sørg for at UI og tekst fremstår professionelt og klart.
