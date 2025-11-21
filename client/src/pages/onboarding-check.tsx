@@ -16,6 +16,17 @@ export default function OnboardingMaturityCheck() {
   const handleAnswer = (points: number) => {
     if (typeof currentStep === "number") {
       setAnswers(prev => ({ ...prev, [currentStep]: points }));
+      
+      // Auto-advance after a short delay to show selection feedback
+      setTimeout(() => {
+        if (currentStep < questions.length - 1) {
+          setCurrentStep(currentStep + 1);
+          setHoveredOption(null);
+        } else {
+          setCurrentStep("result");
+          triggerConfetti();
+        }
+      }, 400);
     }
   };
 
