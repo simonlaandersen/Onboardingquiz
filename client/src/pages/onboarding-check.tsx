@@ -201,123 +201,86 @@ export default function OnboardingMaturityCheck() {
           {typeof currentStep === "number" && (
             <motion.div
               key="quiz"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="flex-1 flex flex-col justify-center max-w-3xl mx-auto w-full py-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="flex-1 flex flex-col justify-center max-w-5xl mx-auto w-full py-8"
             >
-              {/* Segmented Progress Bar */}
-              <div className="flex gap-1 mb-12">
-                {questions.map((_, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ scaleY: 1 }}
-                    animate={{ 
-                      scaleY: idx === currentStep ? 1.5 : 1,
-                      backgroundColor: idx <= currentStep ? "#2F80ED" : "#e2e8f0"
-                    }}
-                    className={`h-1.5 flex-1 rounded-full transition-colors duration-300`}
-                  />
-                ))}
-              </div>
-
-              <div className="space-y-8">
-                <div className="space-y-3 text-center md:text-left">
-                  <motion.span 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="inline-block px-3 py-1 rounded-full bg-blue-50 text-[#2F80ED] font-bold text-xs tracking-widest uppercase"
-                  >
-                    {questions[currentStep].category}
-                  </motion.span>
-                  <motion.h2 
-                    key={currentStep}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="text-3xl md:text-4xl font-bold text-[#0B1E3D] leading-tight"
-                  >
+              <div className="grid lg:grid-cols-12 gap-12">
+                {/* Question Side */}
+                <div className="lg:col-span-5 space-y-8">
+                  <div className="w-12 h-12 bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xl rounded-full mb-6">
+                    {currentStep + 1}
+                  </div>
+                  <h2 className="text-4xl font-bold text-[#0B1E3D] leading-tight">
                     {questions[currentStep].text}
-                  </motion.h2>
+                  </h2>
+                  <div className="h-1 w-24 bg-[#2F80ED]" />
+                  <p className="text-slate-500 uppercase tracking-wider font-bold text-sm">
+                    {questions[currentStep].category}
+                  </p>
                 </div>
 
-                <div className="grid gap-4 mt-8">
+                {/* Options Side */}
+                <div className="lg:col-span-7 grid gap-4 content-center">
                   {questions[currentStep].options.map((option, idx) => (
-                    <motion.div
+                    <motion.button
                       key={idx}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 + idx * 0.1 }}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1 }}
                       onClick={() => handleAnswer(option.points)}
-                      onMouseEnter={() => setHoveredOption(idx)}
-                      onMouseLeave={() => setHoveredOption(null)}
                       className={`
-                        group relative p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 flex items-center gap-5
+                        group relative w-full text-left p-6 transition-all duration-200 border-l-4 
                         ${answers[currentStep] === option.points 
-                          ? "border-[#2F80ED] bg-blue-50/80 shadow-lg shadow-blue-500/10 scale-[1.02]" 
-                          : "border-white bg-white/80 shadow-sm hover:border-blue-200 hover:shadow-md hover:-translate-y-1"}
+                          ? "bg-[#0B1E3D] border-[#2F80ED] text-white shadow-xl scale-[1.02]" 
+                          : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-[#2F80ED]/50 hover:text-[#0B1E3D]"}
                       `}
                     >
-                      <div className={`
-                        w-8 h-8 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all duration-300
-                        ${answers[currentStep] === option.points 
-                          ? "border-[#2F80ED] bg-[#2F80ED] text-white scale-110" 
-                          : "border-slate-200 bg-slate-50 group-hover:border-blue-300"}
-                      `}>
+                      <div className="flex items-center justify-between">
+                        <span className="text-lg font-medium pr-8">{option.text}</span>
                         {answers[currentStep] === option.points && (
-                          <motion.div 
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="w-2.5 h-2.5 bg-white rounded-full" 
-                          />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <p className={`text-lg ${answers[currentStep] === option.points ? "text-[#0B1E3D] font-semibold" : "text-slate-700 font-medium group-hover:text-[#0B1E3D]"}`}>
-                          {option.text}
-                        </p>
-                      </div>
-                      
-                      {/* Fun hover indicator */}
-                      <AnimatePresence>
-                        {answers[currentStep] === option.points && (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0, rotate: -20 }}
-                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                            exit={{ opacity: 0, scale: 0 }}
-                            className="absolute right-4 -top-3 bg-[#2F80ED] text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg"
-                          >
-                            Valgt!
+                          <motion.div layoutId="check">
+                             <CheckCircle2 className="w-6 h-6 text-[#2F80ED]" />
                           </motion.div>
                         )}
-                      </AnimatePresence>
-                    </motion.div>
+                      </div>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center mt-16 border-t border-slate-100 pt-8">
+                <button 
+                  onClick={prevStep} 
+                  disabled={currentStep === 0}
+                  className="flex items-center text-slate-400 hover:text-[#0B1E3D] disabled:opacity-30 transition-colors font-medium"
+                >
+                  <ArrowLeft className="mr-2 w-4 h-4" /> Forrige spørgsmål
+                </button>
+
+                {/* Custom Progress Indicator */}
+                <div className="flex gap-1">
+                  {questions.map((_, idx) => (
+                    <div 
+                      key={idx}
+                      className={`w-2 h-2 rounded-full transition-colors ${idx <= currentStep ? 'bg-[#2F80ED]' : 'bg-slate-200'}`}
+                    />
                   ))}
                 </div>
 
-                <div className="flex justify-between items-center pt-8">
-                  <Button 
-                    variant="ghost" 
-                    onClick={prevStep} 
-                    disabled={currentStep === 0}
-                    className="text-slate-400 hover:text-[#0B1E3D] hover:bg-white/50 -ml-4"
-                  >
-                    <ArrowLeft className="mr-2 w-4 h-4" /> Tilbage
-                  </Button>
-                  <Button 
-                    onClick={nextStep} 
-                    disabled={answers[currentStep] === undefined}
-                    className={`
-                      h-12 px-8 rounded-full font-semibold text-white transition-all duration-300
-                      ${answers[currentStep] === undefined 
-                        ? "bg-slate-200 text-slate-400 cursor-not-allowed" 
-                        : "bg-[#2F80ED] hover:bg-blue-600 shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5"}
-                    `}
-                  >
-                    Næste <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
-                </div>
+                <button 
+                  onClick={nextStep} 
+                  disabled={answers[currentStep] === undefined}
+                  className={`
+                    flex items-center font-bold transition-all
+                    ${answers[currentStep] === undefined 
+                      ? "text-slate-300 cursor-not-allowed" 
+                      : "text-[#2F80ED] hover:text-blue-800 hover:translate-x-1"}
+                  `}
+                >
+                  Næste trin <ArrowRight className="ml-2 w-5 h-5" />
+                </button>
               </div>
             </motion.div>
           )}
