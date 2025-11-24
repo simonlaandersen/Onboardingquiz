@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Onboarding Maturity Check</title>
     <style>
+        /* CSS Isolation - Prevent global styles from affecting quiz */
+        :root { all: initial; }
+        html, body, div, span, h1, h2, h3, h4, h5, h6, p, button, input, textarea, select { all: revert; }
+    </style>
+    <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff; color: #1e293b; line-height: 1.6; }
         .container { min-height: 100vh; width: 100%; background: #ffffff; position: relative; overflow: hidden; display: flex; flex-direction: column; }
