@@ -21,15 +21,24 @@ export default function OnboardingMaturityCheck() {
 
   const fetchConfig = async () => {
     try {
-      const res = await fetch("/api/config");
+      const res = await fetch("/api/quiz-data");
       const data = await res.json();
-      setConfig(data);
       
-      if (data.questionsData && data.questionsData.length > 0) {
-        setQuestions(data.questionsData);
+      const config = {
+        title: data.header_title || "Er jeres onboarding gearet til fremtiden?",
+        subtitle: data.badge_text || "HR Maturity Tools",
+        description: data.description_text || "Tag vores 2-minutters maturity check og få en dybdegående analyse af jeres styrker og potentialer.",
+        buttonText: data.button_text || "Start testen nu",
+        primaryColor: data.color_primary || "#2F80ED",
+        secondaryColor: "#0B1E3D"
+      };
+      setConfig(config);
+      
+      if (data.questions && data.questions.length > 0) {
+        setQuestions(data.questions);
       }
-      if (data.resultsData && data.resultsData.length > 0) {
-        setResults(data.resultsData);
+      if (data.results && data.results.length > 0) {
+        setResults(data.results);
       }
     } catch (error) {
       console.error("Failed to load config:", error);
