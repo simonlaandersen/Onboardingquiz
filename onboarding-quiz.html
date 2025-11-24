@@ -54,49 +54,41 @@
         .nav-btn { background: none; border: none; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; transition: color 0.2s; color: #64748b; }
         .nav-btn:hover:not(:disabled) { color: #0f172a; }
         .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        .nav-btn.next { color: #2563eb; }
-        .result-screen { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; max-width: 1280px; margin: 0 auto; min-height: 100vh; }
-        @media (max-width: 1024px) { .result-screen { grid-template-columns: 1fr; } }
-        .score-card { background: white; border-radius: 24px; padding: 32px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08); border: 1px solid #f1f5f9; position: relative; overflow: hidden; }
-        .score-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: #2563eb; }
-        .score-header { text-align: center; padding-top: 24px; padding-bottom: 40px; }
-        .score-label { font-size: 12px; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase; color: #0b1e3d; margin-bottom: 32px; }
-        .score-circle { position: relative; width: 224px; height: 224px; margin: 0 auto 24px; }
-        .score-glow { position: absolute; inset: 0; background: rgba(96, 165, 250, 0.05); border-radius: 50%; filter: blur(32px); }
+        .nav-btn.next { flex-direction: row-reverse; }
+        .result-screen { display: flex; flex-direction: column; gap: 40px; padding: 40px 0; }
+        .score-card { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: white; padding: 40px; border-radius: 8px; }
+        .score-header { margin-bottom: 32px; }
+        .score-label { font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.9; margin-bottom: 16px; }
+        .score-circle { position: relative; width: 200px; height: 200px; margin: 0 auto 24px; }
+        .score-glow { position: absolute; inset: -20px; background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%); border-radius: 50%; }
         .score-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-        .score-bg-circle { fill: none; stroke: #f1f5f9; stroke-width: 16; }
-        .score-progress-circle { fill: none; stroke: #2563eb; stroke-width: 16; stroke-linecap: round; transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .score-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .score-number { font-size: 48px; font-weight: 900; letter-spacing: -0.02em; color: #0b1e3d; }
-        .score-max { font-size: 14px; color: #94a3b8; font-weight: 500; }
-        .result-title { font-size: 20px; font-weight: bold; margin-bottom: 12px; line-height: 1.25; color: #0b1e3d; text-align: center; }
-        .result-divider { width: 12px; height: 4px; background: #2563eb; margin: 16px auto; border-radius: 2px; }
-        .score-card-footer { background: #f8fafc; margin: 0 -32px -32px; padding: 32px; border-top: 1px solid #f1f5f9; }
-        .result-description { font-size: 14px; color: #64748b; line-height: 1.6; text-align: center; }
-        .insights { display: flex; flex-direction: column; gap: 24px; }
-        .insights-card { background: white; border-radius: 24px; padding: 32px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08); border: 1px solid #f1f5f9; }
-        .insights-title { font-weight: bold; font-size: 18px; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; color: #0b1e3d; }
-        .insights-icon { width: 20px; height: 20px; color: #2563eb; font-size: 18px; }
+        .score-bg-circle { fill: none; stroke: rgba(255,255,255,0.2); stroke-width: 8; }
+        .score-progress-circle { fill: none; stroke: #93c5fd; stroke-width: 8; stroke-linecap: round; }
+        .score-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+        .score-number { font-size: 48px; font-weight: bold; }
+        .score-max { font-size: 12px; opacity: 0.8; }
+        .result-title { font-size: 28px; font-weight: bold; margin-bottom: 16px; }
+        .result-divider { width: 48px; height: 4px; background: #93c5fd; border-radius: 2px; }
+        .score-card-footer { margin-top: 24px; }
+        .result-description { font-size: 16px; line-height: 1.6; opacity: 0.95; }
+        .insights { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+        @media (max-width: 768px) { .insights { grid-template-columns: 1fr; } }
+        .insights-card { background: white; padding: 32px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .insights-title { font-size: 18px; font-weight: bold; margin-bottom: 24px; }
+        .insights-icon { margin-right: 8px; }
         .bullets { display: flex; flex-direction: column; gap: 16px; }
-        .bullet { display: flex; gap: 16px; padding: 16px; border-radius: 16px; background: #f8fafc; border: 1px solid #f1f5f9; transition: border-color 0.2s; }
-        .bullet:hover { border-color: rgba(37, 99, 235, 0.3); }
-        .bullet-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-        .bullet.strength .bullet-icon { background: #dcfce7; color: #15803d; }
-        .bullet.risk .bullet-icon { background: #fee2e2; color: #dc2626; }
-        .bullet.opportunity .bullet-icon { background: #fef3c7; color: #b45309; }
-        .bullet-label { font-size: 11px; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
-        .bullet.strength .bullet-label { color: #166534; }
-        .bullet.risk .bullet-label { color: #7f1d1d; }
-        .bullet.opportunity .bullet-label { color: #78350f; }
-        .bullet-text { font-size: 14px; line-height: 1.6; font-weight: 500; margin: 0; color: #475569; }
-        .cta-card { border-radius: 24px; padding: 32px; color: white; position: relative; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15); background: #0b1e3d; }
-        .cta-glow { position: absolute; top: 0; right: 0; width: 256px; height: 256px; background: #2563eb; border-radius: 50%; filter: blur(80px); opacity: 0.3; transform: translate(1/3, -1/3); pointer-events: none; }
-        .cta-content { position: relative; z-index: 10; display: flex; flex-direction: column; gap: 16px; }
+        .bullet { padding-bottom: 16px; border-bottom: 1px solid #e2e8f0; }
+        .bullet:last-child { border-bottom: none; padding-bottom: 0; }
+        .bullet-label { font-weight: bold; font-size: 12px; text-transform: uppercase; color: #64748b; margin-bottom: 4px; }
+        .bullet-text { font-size: 14px; color: #1e293b; line-height: 1.5; }
+        .cta-card { position: relative; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; padding: 32px; border-radius: 8px; overflow: hidden; }
+        .cta-glow { position: absolute; top: -50%; right: -50%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); border-radius: 50%; }
+        .cta-content { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 24px; }
         @media (min-width: 769px) { .cta-content { flex-direction: row; justify-content: space-between; align-items: center; } }
         .cta-text h4 { font-weight: bold; font-size: 18px; margin-bottom: 8px; }
         .cta-text p { font-size: 14px; color: #bfdbfe; line-height: 1.5; max-width: 280px; }
         .cta-buttons { display: flex; flex-direction: column; gap: 8px; }
-        .btn-white { background: #2563eb; color: white; padding: 10px 24px; font-size: 14px; font-weight: 600; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s; text-decoration: none !important; }
+        .btn-white { background: #2563eb; color: white; padding: 10px 24px; font-size: 14px; font-weight: 600; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s; text-decoration: none !important; display: inline-flex; }
         .btn-white:hover { background: #1d4ed8; text-decoration: none !important; }
         .btn-ghost { background: transparent; color: #93c5fd; border: none; cursor: pointer; font-size: 13px; font-weight: 600; padding: 8px 24px; transition: color 0.2s; display: flex; align-items: center; gap: 8px; }
         .btn-ghost:hover { color: white; }
@@ -105,34 +97,45 @@
 <body>
     <div class="container">
         <header>
-            <div></div>
-            <div class="header-title">Spørgsmål <span class="current-q">1</span> / <span class="total-q">10</span></div>
+            <div class="header-title" id="headerTitle"></div>
         </header>
         <main>
-            <div class="screen active start-screen" data-screen="start">
-                <div class="start-content">
-                    <span class="badge">HR Maturity Tools</span>
-                    <h1>Er jeres onboarding gearet til fremtiden?</h1>
-                    <p class="description">Tag vores 2-minutters maturity check og få en dybdegående analyse af jeres styrker og potentialer.</p>
-                    <button class="btn" onclick="app.startQuiz()">Start testen nu →</button>
-                </div>
-                <div class="graphic">
-                    <div class="graphic-wrapper">
-                        <svg class="circle-svg" viewBox="0 0 450 450" style="width:100%;height:100%;position:absolute;">
-                            <circle cx="225" cy="225" r="200" fill="none" stroke="#cbd5e1" stroke-width="2"/>
-                            <circle cx="225" cy="225" r="140" fill="none" stroke="#cbd5e1" stroke-width="2"/>
-                            <circle cx="225" cy="225" r="80" fill="none" stroke="#2563eb" stroke-width="2"/>
-                        </svg>
-                        <div class="power-icon-container">
-                            <svg viewBox="0 0 100 100" style="width:100px;height:100px;position:absolute;">
-                                <circle cx="50" cy="50" r="48" fill="#2563eb"/>
-                                <circle cx="50" cy="50" r="42" fill="none" stroke="white" stroke-width="2"/>
-                                <circle cx="50" cy="50" r="36" fill="none" stroke="white" stroke-width="1.5"/>
-                                <circle cx="50" cy="50" r="8" fill="white"/>
+            <div class="screen active" data-screen="start">
+                <div class="start-screen">
+                    <div class="start-content">
+                        <div class="badge" id="badgeText">GRATIS VURDERING</div>
+                        <h1 id="mainTitle">Onboarding Maturity Check</h1>
+                        <p class="description" id="descriptionText">Få et konkret billede af jeres HR-onboarding niveau</p>
+                        <button class="btn" onclick="app.startQuiz()" id="startBtn">Start vurdering</button>
+                    </div>
+                    <div class="graphic">
+                        <div class="graphic-wrapper">
+                            <svg class="circle-svg" viewBox="0 0 450 450">
+                                <circle cx="225" cy="225" r="200" fill="none" stroke="#f1f5f9" stroke-width="2"/>
+                                <circle cx="225" cy="225" r="150" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+                                <circle cx="225" cy="225" r="100" fill="none" stroke="#cbd5e1" stroke-width="2"/>
                             </svg>
+                            <div class="power-icon-container">
+                                <div class="power-icon">
+                                    <svg width="50" height="50" viewBox="0 0 100 100" fill="none">
+                                        <path d="M50 20 Q50 20 50 40" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                                        <circle cx="50" cy="50" r="30" fill="none" stroke="white" stroke-width="3"/>
+                                        <circle cx="50" cy="50" r="36" fill="none" stroke="white" stroke-width="1.5"/>
+                                        <circle cx="50" cy="50" r="8" fill="white"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="stat-card stat-card-1">
+                                <div class="stat-icon" id="stat1Emoji">📊</div>
+                                <h3 id="stat1Title">Datadrevet Indsigt</h3>
+                                <p id="stat1Text">Få konkrete tal på jeres HR-indsats.</p>
+                            </div>
+                            <div class="stat-card stat-card-2">
+                                <div class="stat-icon" id="stat2Emoji">👥</div>
+                                <h3 id="stat2Title">Medarbejderrejse</h3>
+                                <p id="stat2Text">Optimér oplevelsen fra dag 1.</p>
+                            </div>
                         </div>
-                        <div class="stat-card stat-card-1"><div class="stat-icon">📊</div><h3>Datadrevet Indsigt</h3><p>Få konkrete tal på jeres HR-indsats.</p></div>
-                        <div class="stat-card stat-card-2"><div class="stat-icon">👥</div><h3>Medarbejderrejse</h3><p>Optimér oplevelsen fra dag 1.</p></div>
                     </div>
                 </div>
             </div>
@@ -157,8 +160,8 @@
                     <div class="cta-card">
                         <div class="cta-glow"></div>
                         <div class="cta-content">
-                            <div class="cta-text"><h4>Få styr på jeres onboarding</h4><p>Saml planer, opgaver og opfølgning ét sted med HR-ON Boarding.</p><div style="margin-top: 12px; font-size: 18px; font-weight: bold; color: #93c5fd;">HR-ON</div></div>
-                            <div class="cta-buttons"><a href="https://hr-on.com/onboardingplatform/" target="_blank" class="btn-white" style="text-decoration: none; display: inline-flex;">Læs mere</a><button class="btn-ghost" onclick="app.reset()">↻ Start forfra</button></div>
+                            <div class="cta-text"><h4 id="ctaTitle">Få styr på jeres onboarding</h4><p id="ctaDescription">Saml planer, opgaver og opfølgning ét sted med HR-ON Boarding.</p><div style="margin-top: 12px; font-size: 18px; font-weight: bold; color: #93c5fd;" id="ctaLogoText">HR-ON</div></div>
+                            <div class="cta-buttons"><a href="https://hr-on.com/onboardingplatform/" target="_blank" class="btn-white" id="ctaLink" style="text-decoration: none; display: inline-flex;">Læs mere</a><button class="btn-ghost" onclick="app.reset()">↻ Start forfra</button></div>
                         </div>
                     </div>
                 </div>
@@ -171,26 +174,162 @@
         </main>
     </div>
     <script>
-        const questions = [
-            { id: 1, category: "Plan og struktur", text: "Har I en standardiseret plan for de første 30 dage for nye medarbejdere?", options: [{ text: "Ja, for alle relevante stillinger og vi opdaterer den jævnligt.", points: 3 }, { text: "Ja, for de fleste nøglestillinger.", points: 2 }, { text: "Kun for enkelte roller.", points: 1 }, { text: "Nej, det løses fra gang til gang.", points: 0 }] },
-            { id: 2, category: "Kultur og værdier", text: "Hvordan introducerer I kultur og værdier i onboardingforløbet?", options: [{ text: "Der er et struktureret forløb med konkrete aktiviteter og eksempler.", points: 3 }, { text: "Der er en præsentation eller et oplæg, men ikke meget mere.", points: 2 }, { text: "Det sker primært uformelt i hverdagen.", points: 1 }, { text: "Vi har ikke en klar tilgang til det.", points: 0 }] },
-            { id: 3, category: "Netværk og relationer", text: "Hvordan sikrer I, at nye medarbejdere får opbygget et relevant internt netværk?", options: [{ text: "Vi har planlagte møder med nøglepersoner og tværgående kolleger.", points: 3 }, { text: "Vi introducerer dem til nærmeste team og enkelte nøglepersoner.", points: 2 }, { text: "Det forventes at ske naturligt over tid.", points: 1 }, { text: "Vi har ikke fokus på det.", points: 0 }] },
-            { id: 4, category: "Rolle- og ansvarsfordeling", text: "Hvor tydeligt er ansvaret for onboarding fordelt mellem HR, leder og kolleger?", options: [{ text: "Meget tydeligt og dokumenteret.", points: 3 }, { text: "Nogenlunde tydeligt, men ikke formelt beskrevet.", points: 2 }, { text: "Det er primært implicit og afhænger af den enkelte leder.", points: 1 }, { text: "Det er uklart, hvem der har ansvaret.", points: 0 }] },
-            { id: 5, category: "Opfølgning og måling", text: "Evaluerer I systematisk, om onboardingforløbet har været en succes?", options: [{ text: "Ja, via faste målinger og samtaler på bestemte tidspunkter.", points: 3 }, { text: "Ja, men mere ad hoc og uregelmæssigt.", points: 2 }, { text: "Kun hvis der opstår problemer.", points: 1 }, { text: "Nej, vi evaluerer ikke struktureret.", points: 0 }] },
-            { id: 6, category: "Forberedelse før første dag", text: "Hvor meget er på plads før første arbejdsdag for en ny medarbejder?", options: [{ text: "Udstyr, systemadgang, program og velkomstmateriale er klart.", points: 3 }, { text: "Det meste er klar, men enkelte ting mangler ofte.", points: 2 }, { text: "Noget er klar, men mange ting ordnes først på dagen.", points: 1 }, { text: "Det meste bliver ordnet, efter medarbejderen er startet.", points: 0 }] },
-            { id: 7, category: "Digital støtte", text: "Hvordan understøtter I onboarding digitalt i dag?", options: [{ text: "Vi bruger et dedikeret onboardingværktøj med opgaver, planer og opfølgning.", points: 3 }, { text: "Vi bruger HR-system, intranet eller andre værktøjer med simple skabeloner.", points: 2 }, { text: "Vi bruger primært mails, dokumenter og regneark.", points: 1 }, { text: "Der er ingen samlet digital løsning.", points: 0 }] },
-            { id: 8, category: "Ledelsesinvolvering", text: "Hvor tydeligt er lederens rolle i onboarding?", options: [{ text: "Lederens rolle er klart defineret med konkrete opgaver og touchpoints.", points: 3 }, { text: "Lederen ved nogenlunde hvad der forventes, men uden fast struktur.", points: 2 }, { text: "Det afhænger meget af den enkelte leder.", points: 1 }, { text: "Der er ingen fælles forventninger til lederens rolle.", points: 0 }] },
-            { id: 9, category: "Varighed og helhed", text: "Hvor længe betragter I onboardingforløbet som aktivt?", options: [{ text: "Vi har en tydelig plan der strækker sig mindst 3 måneder.", points: 3 }, { text: "Vi har en plan for 2 til 4 uger.", points: 2 }, { text: "Vi fokuserer mest på første uge.", points: 1 }, { text: "Onboarding er primært første dag.", points: 0 }] },
-            { id: 10, category: "Løbende forbedring", text: "Hvordan arbejder I med at forbedre jeres onboarding over tid?", options: [{ text: "Vi bruger data og feedback til at justere programmet løbende.", points: 3 }, { text: "Vi justerer indimellem baseret på oplevelser og enkeltstående input.", points: 2 }, { text: "Vi ændrer kun noget hvis der har været en meget dårlig oplevelse.", points: 1 }, { text: "Onboardingforløbet har stort set været det samme i flere år.", points: 0 }] }
-        ];
-        const results = [
-            { min: 0, max: 10, title: "Jeres onboarding er primært ad hoc", description: "Onboarding afhænger i høj grad af den enkelte leder og situation. Nye medarbejdere kan få meget forskellige oplevelser, og vigtige elementer risikerer at blive glemt.", bullets: [{ type: "strength", label: "Styrke", text: "I kan tilpasse jer hurtigt fra gang til gang." }, { type: "risk", label: "Risiko", text: "Uensartet kvalitet og større risiko for dårlige oplevelser." }, { type: "opportunity", label: "Mulighed", text: "Ved at samle onboarding i en enkel struktur kan I hurtigt løfte niveauet." }] },
-            { min: 11, max: 18, title: "Jeres onboarding har et grundlæggende fundament", description: "I har flere gode elementer i onboarding, men de er ikke fuldt ud standardiseret og skaleret. Oplevelsen kan stadig variere alt efter rolle og leder.", bullets: [{ type: "strength", label: "Styrke", text: "Nye medarbejdere får typisk en fornuftig start." }, { type: "risk", label: "Risiko", text: "Manglende konsistens og begrænset opfølgning." }, { type: "opportunity", label: "Mulighed", text: "Med en samlet plan og digitale værktøjer kan I skabe en mere ensartet oplevelse." }] },
-            { min: 19, max: 24, title: "Jeres onboarding er struktureret", description: "I har et solidt fundament med planer, faste elementer og tydelige roller. De største muligheder ligger i at gøre onboarding mere datadrevet og let at skalere på tværs af organisationen.", bullets: [{ type: "strength", label: "Styrke", text: "Klare rammer og genkendelige forløb." }, { type: "risk", label: "Risiko", text: "Afhængighed af enkelte nøglepersoner og manuelle processer." }, { type: "opportunity", label: "Mulighed", text: "Ved at samle onboarding digitalt kan I spare tid og få bedre overblik." }] },
-            { min: 25, max: 30, title: "Jeres onboarding er på et strategisk niveau", description: "Onboarding er integreret i jeres måde at drive forretning og HR på. I arbejder struktureret med forløb, roller og opfølgning og bruger viden til at forbedre oplevelsen løbende.", bullets: [{ type: "strength", label: "Styrke", text: "En stærk, konsistent oplevelse for nye medarbejdere." }, { type: "risk", label: "Risiko", text: "At kompleksitet og vedligeholdelse kan vokse over tid." }, { type: "opportunity", label: "Mulighed", text: "I kan bruge data til at koble onboarding endnu tættere til performance og fastholdelse." }] }
-        ];
-        class Quiz { constructor() { this.currentQuestion = 0; this.answers = {}; this.init(); } init() { this.setupProgressDots(); this.updateQuestionDisplay(); } startQuiz() { this.goToScreen('quiz'); document.getElementById('quizFooter').style.display = 'flex'; } goToScreen(screen) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.querySelector(`[data-screen="${screen}"]`).classList.add('active'); document.querySelector('.header-title').classList.toggle('show', screen === 'quiz'); } setupProgressDots() { const container = document.getElementById('progressDots'); container.innerHTML = ''; questions.forEach((_, idx) => { const dot = document.createElement('div'); dot.className = 'dot' + (idx === 0 ? ' active' : ''); container.appendChild(dot); }); } updateQuestionDisplay() { const q = questions[this.currentQuestion]; const selected = this.answers[this.currentQuestion]; document.getElementById('questionNumber').textContent = this.currentQuestion + 1; document.getElementById('questionText').textContent = q.text; document.getElementById('categoryText').textContent = q.category; document.querySelector('.current-q').textContent = this.currentQuestion + 1; document.querySelector('.total-q').textContent = questions.length; const container = document.getElementById('optionsContainer'); container.innerHTML = q.options.map((opt, idx) => `<button class="option ${selected === idx ? 'selected' : ''}" onclick="app.selectAnswer(${idx})"><span>${opt.text}</span>${selected === idx ? '<div class="option-check">✓</div>' : ''}</button>`).join(''); const dots = document.querySelectorAll('.dot'); dots.forEach((dot, idx) => { dot.classList.toggle('active', idx <= this.currentQuestion); }); document.getElementById('prevBtn').disabled = this.currentQuestion === 0; document.getElementById('nextBtn').disabled = selected === undefined; } selectAnswer(idx) { this.answers[this.currentQuestion] = idx; this.updateQuestionDisplay(); } nextQuestion() { if (this.currentQuestion < questions.length - 1) { this.currentQuestion++; this.updateQuestionDisplay(); } else { this.showResults(); } } prevQuestion() { if (this.currentQuestion > 0) { this.currentQuestion--; this.updateQuestionDisplay(); } } showResults() { const score = this.calculateScore(); const result = this.getResult(score); document.getElementById('scoreNumber').textContent = score; document.getElementById('resultTitle').textContent = result.title; document.getElementById('resultDescription').textContent = result.description; const bulletsContainer = document.getElementById('bulletsContainer'); bulletsContainer.innerHTML = result.bullets.map(bullet => `<div class="bullet ${bullet.type}"><div class="bullet-icon">${bullet.type === 'strength' ? '✓' : bullet.type === 'risk' ? '!' : '↗'}</div><div><span class="bullet-label">${bullet.label}</span><p class="bullet-text">${bullet.text}</p></div></div>`).join(''); const circumference = 2 * Math.PI * 100; const progress = score / 30; const offset = circumference * (1 - progress); document.getElementById('progressCircle').style.strokeDashoffset = offset; document.getElementById('quizFooter').style.display = 'none'; this.goToScreen('result'); } calculateScore() { let total = 0; Object.entries(this.answers).forEach(([qIdx, optIdx]) => { total += questions[qIdx].options[optIdx].points; }); return total; } getResult(score) { return results.find(r => score >= r.min && score <= r.max) || results[0]; } reset() { this.currentQuestion = 0; this.answers = {}; this.init(); this.goToScreen('start'); } }
-        const app = new Quiz();
+        let quizConfig = {};
+        
+        async function loadQuizConfig() {
+            try {
+                const response = await fetch('/api/quiz-data');
+                quizConfig = await response.json();
+                initializeUI();
+                app = new Quiz();
+            } catch (error) {
+                console.error('Error loading quiz config:', error);
+            }
+        }
+        
+        function initializeUI() {
+            // General
+            document.getElementById('badgeText').textContent = quizConfig.badge_text || 'GRATIS VURDERING';
+            document.getElementById('mainTitle').textContent = quizConfig.header_title || 'Onboarding Maturity Check';
+            document.getElementById('descriptionText').textContent = quizConfig.description_text || 'Få et konkret billede af jeres HR-onboarding niveau';
+            document.getElementById('startBtn').textContent = quizConfig.button_text || 'Start vurdering';
+            document.getElementById('headerTitle').textContent = quizConfig.header_title || '';
+            
+            // Stat cards
+            document.getElementById('stat1Emoji').textContent = quizConfig.stat1_emoji || '📊';
+            document.getElementById('stat1Title').textContent = quizConfig.stat1_title || 'Datadrevet Indsigt';
+            document.getElementById('stat1Text').textContent = quizConfig.stat1_text || 'Få konkrete tal på jeres HR-indsats.';
+            document.getElementById('stat2Emoji').textContent = quizConfig.stat2_emoji || '👥';
+            document.getElementById('stat2Title').textContent = quizConfig.stat2_title || 'Medarbejderrejse';
+            document.getElementById('stat2Text').textContent = quizConfig.stat2_text || 'Optimér oplevelsen fra dag 1.';
+            
+            // CTA
+            document.getElementById('ctaTitle').textContent = quizConfig.cta_title || 'Få styr på jeres onboarding';
+            document.getElementById('ctaDescription').textContent = quizConfig.cta_description || 'Saml planer, opgaver og opfølgning ét sted med HR-ON Boarding.';
+            document.getElementById('ctaLink').href = quizConfig.cta_link || 'https://hr-on.com/onboardingplatform/';
+            document.getElementById('ctaLogoText').textContent = quizConfig.cta_logo_text || 'HR-ON';
+        }
+        
+        class Quiz {
+            constructor() {
+                this.currentQuestion = 0;
+                this.answers = {};
+                this.init();
+            }
+            
+            init() {
+                this.setupProgressDots();
+                this.updateQuestionDisplay();
+            }
+            
+            startQuiz() {
+                this.goToScreen('quiz');
+                document.getElementById('quizFooter').style.display = 'flex';
+            }
+            
+            goToScreen(screen) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.querySelector(`[data-screen="${screen}"]`).classList.add('active');
+                document.querySelector('.header-title').classList.toggle('show', screen === 'quiz');
+            }
+            
+            setupProgressDots() {
+                const container = document.getElementById('progressDots');
+                container.innerHTML = '';
+                (quizConfig.questions || []).forEach((_, idx) => {
+                    const dot = document.createElement('div');
+                    dot.className = 'dot' + (idx === 0 ? ' active' : '');
+                    container.appendChild(dot);
+                });
+            }
+            
+            updateQuestionDisplay() {
+                const questions = quizConfig.questions || [];
+                const q = questions[this.currentQuestion];
+                const selected = this.answers[this.currentQuestion];
+                
+                document.getElementById('questionNumber').textContent = this.currentQuestion + 1;
+                document.getElementById('questionText').textContent = q.text;
+                document.getElementById('categoryText').textContent = q.category;
+                
+                const container = document.getElementById('optionsContainer');
+                container.innerHTML = q.options.map((opt, idx) => 
+                    `<button class="option ${selected === idx ? 'selected' : ''}" onclick="app.selectAnswer(${idx})"><span>${opt.text}</span>${selected === idx ? '<div class="option-check">✓</div>' : ''}</button>`
+                ).join('');
+                
+                const dots = document.querySelectorAll('.dot');
+                dots.forEach((dot, idx) => {
+                    dot.classList.toggle('active', idx <= this.currentQuestion);
+                });
+                
+                document.getElementById('prevBtn').disabled = this.currentQuestion === 0;
+                document.getElementById('nextBtn').disabled = selected === undefined;
+            }
+            
+            selectAnswer(idx) {
+                this.answers[this.currentQuestion] = idx;
+                this.updateQuestionDisplay();
+            }
+            
+            nextQuestion() {
+                if (this.currentQuestion < (quizConfig.questions || []).length - 1) {
+                    this.currentQuestion++;
+                    this.updateQuestionDisplay();
+                } else {
+                    this.showResults();
+                }
+            }
+            
+            prevQuestion() {
+                if (this.currentQuestion > 0) {
+                    this.currentQuestion--;
+                    this.updateQuestionDisplay();
+                }
+            }
+            
+            showResults() {
+                const questions = quizConfig.questions || [];
+                let score = 0;
+                for (let i = 0; i < questions.length; i++) {
+                    const selectedIdx = this.answers[i];
+                    if (selectedIdx !== undefined) {
+                        score += questions[i].options[selectedIdx].points;
+                    }
+                }
+                
+                const results = quizConfig.results || [];
+                const result = results.find(r => score >= r.min && score <= r.max) || results[0];
+                
+                document.getElementById('scoreNumber').textContent = score;
+                document.getElementById('resultTitle').textContent = result.title;
+                document.getElementById('resultDescription').textContent = result.description;
+                
+                const bulletsContainer = document.getElementById('bulletsContainer');
+                bulletsContainer.innerHTML = (result.bullets || []).map(b => `
+                    <div class="bullet">
+                        <div class="bullet-label">${b.label}</div>
+                        <div class="bullet-text">${b.text}</div>
+                    </div>
+                `).join('');
+                
+                const circumference = 2 * Math.PI * 100;
+                const offset = circumference - (score / 30) * circumference;
+                document.getElementById('progressCircle').style.strokeDashoffset = offset;
+                
+                this.goToScreen('result');
+                document.getElementById('quizFooter').style.display = 'none';
+            }
+            
+            reset() {
+                this.currentQuestion = 0;
+                this.answers = {};
+                this.goToScreen('start');
+                document.getElementById('quizFooter').style.display = 'none';
+            }
+        }
+        
+        let app;
+        loadQuizConfig();
     </script>
 </body>
 </html>
