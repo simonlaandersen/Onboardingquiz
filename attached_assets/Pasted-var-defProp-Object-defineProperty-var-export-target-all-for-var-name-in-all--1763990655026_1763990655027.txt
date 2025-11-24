@@ -1,0 +1,293 @@
+var __defProp = Object.defineProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+
+// server/index-prod.ts
+import fs2 from "node:fs";
+import path2 from "node:path";
+import express2 from "express";
+
+// server/app.ts
+import express from "express";
+
+// server/routes.ts
+import { createServer } from "http";
+
+// server/db.ts
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
+
+// shared/schema.ts
+var schema_exports = {};
+__export(schema_exports, {
+  config: () => config,
+  insertConfigSchema: () => insertConfigSchema,
+  insertUserSchema: () => insertUserSchema,
+  users: () => users
+});
+import { sql } from "drizzle-orm";
+import { pgTable, text, varchar, jsonb } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+var users = pgTable("users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull()
+});
+var config = pgTable("config", {
+  id: varchar("id").primaryKey().default("default"),
+  primaryColor: varchar("primary_color").default("#2F80ED"),
+  secondaryColor: varchar("secondary_color").default("#0B1E3D"),
+  title: text("title").default("Er jeres onboarding gearet til fremtiden?"),
+  subtitle: text("subtitle").default("HR Maturity Tools"),
+  description: text("description").default("Tag vores 2-minutters maturity check og f\xE5 en dybdeg\xE5ende analyse af jeres styrker og potentialer."),
+  buttonText: varchar("button_text").default("Start testen nu"),
+  questionsData: jsonb("questions_data").$type().default([]),
+  resultsData: jsonb("results_data").$type().default([])
+});
+var insertUserSchema = createInsertSchema(users).pick({
+  username: true,
+  password: true
+});
+var insertConfigSchema = createInsertSchema(config).omit({
+  id: true
+});
+
+// server/db.ts
+var databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL environment variable is not set");
+}
+var client = neon(databaseUrl);
+var db = drizzle(client, { schema: schema_exports });
+
+// server/storage.ts
+import { eq } from "drizzle-orm";
+var DatabaseStorage = class {
+  async getUser(id) {
+    const result = await db.query.users.findFirst({ where: eq(users.id, id) });
+    return result;
+  }
+  async getUserByUsername(username) {
+    const result = await db.query.users.findFirst({ where: eq(users.username, username) });
+    return result;
+  }
+  async createUser(insertUser) {
+    const [result] = await db.insert(users).values(insertUser).returning();
+    return result;
+  }
+  async getConfig() {
+    let result = await db.query.config.findFirst({ where: eq(config.id, "default") });
+    if (!result) {
+      const defaultConfig = {
+        primaryColor: "#2F80ED",
+        secondaryColor: "#0B1E3D",
+        title: "Er jeres onboarding gearet til fremtiden?",
+        subtitle: "HR Maturity Tools",
+        description: "Tag vores 2-minutters maturity check og f\xE5 en dybdeg\xE5ende analyse af jeres styrker og potentialer.",
+        buttonText: "Start testen nu",
+        questionsData: [],
+        resultsData: []
+      };
+      const [newConfig] = await db.insert(config).values({ id: "default", ...defaultConfig }).returning();
+      result = newConfig;
+    }
+    return result;
+  }
+  async updateConfig(data) {
+    const [result] = await db.update(config).set(data).where(eq(config.id, "default")).returning();
+    return result;
+  }
+};
+var storage = new DatabaseStorage();
+
+// server/routes.ts
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+var __dirname = path.dirname(fileURLToPath(import.meta.url));
+var DATA_FILE = path.join(__dirname, "..", "quiz-data.json");
+var defaultQuizData = {
+  badge_text: "GRATIS VURDERING",
+  header_title: "",
+  description_text: "F\xE5 et konkret billede af jeres HR-onboarding niveau",
+  button_text: "Start vurdering",
+  stat1_title: "Datadrevet Indsigt",
+  stat1_text: "F\xE5 konkrete tal p\xE5 jeres HR-indsats.",
+  stat1_emoji: "\u{1F4CA}",
+  stat2_title: "Medarbejderrejse",
+  stat2_text: "Optim\xE9r oplevelsen fra dag 1.",
+  stat2_emoji: "\u{1F465}",
+  cta_title: "F\xE5 styr p\xE5 jeres onboarding",
+  cta_description: "Saml planer, opgaver og opf\xF8lgning \xE9t sted med HR-ON Boarding.",
+  cta_link: "https://hr-on.com/onboardingplatform/",
+  cta_logo_text: "HR-ON",
+  color_primary: "#2563eb",
+  color_primary_dark: "#1d4ed8",
+  header_padding: 8,
+  questions: [
+    { id: 1, category: "Plan og struktur", text: "Har I en standardiseret plan for de f\xF8rste 30 dage for nye medarbejdere?", options: [{ text: "Ja, for alle relevante stillinger og vi opdaterer den j\xE6vnligt.", points: 3 }, { text: "Ja, for de fleste n\xF8glestillinger.", points: 2 }, { text: "Kun for enkelte roller.", points: 1 }, { text: "Nej, det l\xF8ses fra gang til gang.", points: 0 }] },
+    { id: 2, category: "Kultur og v\xE6rdier", text: "Hvordan introducerer I kultur og v\xE6rdier i onboardingforl\xF8bet?", options: [{ text: "Der er et struktureret forl\xF8b med konkrete aktiviteter og eksempler.", points: 3 }, { text: "Der er en pr\xE6sentation eller et opl\xE6g, men ikke meget mere.", points: 2 }, { text: "Det sker prim\xE6rt uformelt i hverdagen.", points: 1 }, { text: "Vi har ikke en klar tilgang til det.", points: 0 }] },
+    { id: 3, category: "Netv\xE6rk og relationer", text: "Hvordan sikrer I, at nye medarbejdere f\xE5r opbygget et relevant internt netv\xE6rk?", options: [{ text: "Vi har planlagte m\xF8der med n\xF8glepersoner og tv\xE6rg\xE5ende kolleger.", points: 3 }, { text: "Vi introducerer dem til n\xE6rmeste team og enkelte n\xF8glepersoner.", points: 2 }, { text: "Det forventes at ske naturligt over tid.", points: 1 }, { text: "Vi har ikke fokus p\xE5 det.", points: 0 }] },
+    { id: 4, category: "Rolle- og ansvarsfordeling", text: "Hvor tydeligt er ansvaret for onboarding fordelt mellem HR, leder og kolleger?", options: [{ text: "Meget tydeligt og dokumenteret.", points: 3 }, { text: "Nogenlunde tydeligt, men ikke formelt beskrevet.", points: 2 }, { text: "Det er prim\xE6rt implicit og afh\xE6nger af den enkelte leder.", points: 1 }, { text: "Det er uklart, hvem der har ansvaret.", points: 0 }] },
+    { id: 5, category: "Opf\xF8lgning og m\xE5ling", text: "Evaluerer I systematisk, om onboardingforl\xF8bet har v\xE6ret en succes?", options: [{ text: "Ja, via faste m\xE5linger og samtaler p\xE5 bestemte tidspunkter.", points: 3 }, { text: "Ja, men mere ad hoc og uregelm\xE6ssigt.", points: 2 }, { text: "Kun hvis der opst\xE5r problemer.", points: 1 }, { text: "Nej, vi evaluerer ikke struktureret.", points: 0 }] },
+    { id: 6, category: "Forberedelse f\xF8r f\xF8rste dag", text: "Hvor meget er p\xE5 plads f\xF8r f\xF8rste arbejdsdag for en ny medarbejder?", options: [{ text: "Udstyr, systemadgang, program og velkomstmateriale er klart.", points: 3 }, { text: "Det meste er klar, men enkelte ting mangler ofte.", points: 2 }, { text: "Noget er klar, men mange ting ordnes f\xF8rst p\xE5 dagen.", points: 1 }, { text: "Det meste bliver ordnet, efter medarbejderen er startet.", points: 0 }] },
+    { id: 7, category: "Digital st\xF8tte", text: "Hvordan underst\xF8tter I onboarding digitalt i dag?", options: [{ text: "Vi bruger et dedikeret onboardingv\xE6rkt\xF8j med opgaver, planer og opf\xF8lgning.", points: 3 }, { text: "Vi bruger HR-system, intranet eller andre v\xE6rkt\xF8jer med simple skabeloner.", points: 2 }, { text: "Vi bruger prim\xE6rt mails, dokumenter og regneark.", points: 1 }, { text: "Der er ingen samlet digital l\xF8sning.", points: 0 }] },
+    { id: 8, category: "Ledelsesinvolvering", text: "Hvor tydeligt er lederens rolle i onboarding?", options: [{ text: "Lederens rolle er klart defineret med konkrete opgaver og touchpoints.", points: 3 }, { text: "Lederen ved nogenlunde hvad der forventes, men uden fast struktur.", points: 2 }, { text: "Det afh\xE6nger meget af den enkelte leder.", points: 1 }, { text: "Der er ingen f\xE6lles forventninger til lederens rolle.", points: 0 }] },
+    { id: 9, category: "Varighed og helhed", text: "Hvor l\xE6nge betragter I onboardingforl\xF8bet som aktivt?", options: [{ text: "Vi har en tydelig plan der str\xE6kker sig mindst 3 m\xE5neder.", points: 3 }, { text: "Vi har en plan for 2 til 4 uger.", points: 2 }, { text: "Vi fokuserer mest p\xE5 f\xF8rste uge.", points: 1 }, { text: "Onboarding er prim\xE6rt f\xF8rste dag.", points: 0 }] },
+    { id: 10, category: "L\xF8bende forbedring", text: "Hvordan arbejder I med at forbedre jeres onboarding over tid?", options: [{ text: "Vi bruger data og feedback til at justere programmet l\xF8bende.", points: 3 }, { text: "Vi justerer indimellem baseret p\xE5 oplevelser og enkeltst\xE5ende input.", points: 2 }, { text: "Vi \xE6ndrer kun noget hvis der har v\xE6ret en meget d\xE5rlig oplevelse.", points: 1 }, { text: "Onboardingforl\xF8bet har stort set v\xE6ret det samme i flere \xE5r.", points: 0 }] }
+  ],
+  results: [
+    { min: 0, max: 10, title: "Jeres onboarding er prim\xE6rt ad hoc", description: "Onboarding afh\xE6nger i h\xF8j grad af den enkelte leder og situation. Nye medarbejdere kan f\xE5 meget forskellige oplevelser, og vigtige elementer risikerer at blive glemt.", bullets: [{ type: "strength", label: "Styrke", text: "I kan tilpasse jer hurtigt fra gang til gang." }, { type: "risk", label: "Risiko", text: "Uensartet kvalitet og st\xF8rre risiko for d\xE5rlige oplevelser." }, { type: "opportunity", label: "Mulighed", text: "Ved at samle onboarding i en enkel struktur kan I hurtigt l\xF8fte niveauet." }] },
+    { min: 11, max: 18, title: "Jeres onboarding har et grundl\xE6ggende fundament", description: "I har flere gode elementer i onboarding, men de er ikke fuldt ud standardiseret og skaleret. Oplevelsen kan stadig variere alt efter rolle og leder.", bullets: [{ type: "strength", label: "Styrke", text: "Nye medarbejdere f\xE5r typisk en fornuftig start." }, { type: "risk", label: "Risiko", text: "Manglende konsistens og begr\xE6nset opf\xF8lgning." }, { type: "opportunity", label: "Mulighed", text: "Med en samlet plan og digitale v\xE6rkt\xF8jer kan I skabe en mere ensartet oplevelse." }] },
+    { min: 19, max: 24, title: "Jeres onboarding er struktureret", description: "I har et solidt fundament med planer, faste elementer og tydelige roller. De st\xF8rste muligheder ligger i at g\xF8re onboarding mere datadrevet og let at skalere p\xE5 tv\xE6rs af organisationen.", bullets: [{ type: "strength", label: "Styrke", text: "Klare rammer og genkendelige forl\xF8b." }, { type: "risk", label: "Risiko", text: "Afh\xE6ngighed af enkelte n\xF8glepersoner og manuelle processer." }, { type: "opportunity", label: "Mulighed", text: "Ved at samle onboarding digitalt kan I spare tid og f\xE5 bedre overblik." }] },
+    { min: 25, max: 30, title: "Jeres onboarding er p\xE5 et strategisk niveau", description: "Onboarding er integreret i jeres m\xE5de at drive forretning og HR p\xE5. I arbejder struktureret med forl\xF8b, roller og opf\xF8lgning og bruger viden til at forbedre oplevelsen l\xF8bende.", bullets: [{ type: "strength", label: "Styrke", text: "En st\xE6rk, konsistent oplevelse for nye medarbejdere." }, { type: "risk", label: "Risiko", text: "At kompleksitet og vedligeholdelse kan vokse over tid." }, { type: "opportunity", label: "Mulighed", text: "I kan bruge data til at koble onboarding endnu t\xE6ttere til performance og fastholdelse." }] }
+  ]
+};
+function loadQuizData() {
+  try {
+    if (fs.existsSync(DATA_FILE)) {
+      const data = fs.readFileSync(DATA_FILE, "utf8");
+      return JSON.parse(data);
+    }
+  } catch (error) {
+    console.error("Error loading quiz data:", error);
+  }
+  return defaultQuizData;
+}
+async function registerRoutes(app2) {
+  app2.get("/api/config", async (req, res) => {
+    const config2 = await storage.getConfig();
+    res.json(config2);
+  });
+  app2.post("/api/config", async (req, res) => {
+    try {
+      const validated = insertConfigSchema.parse(req.body);
+      const config2 = await storage.updateConfig(validated);
+      res.json(config2);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+  app2.get("/quiz", (req, res) => {
+    try {
+      const htmlPath = path.join(__dirname, "..", "onboarding-quiz.html");
+      const html = fs.readFileSync(htmlPath, "utf8");
+      res.header("Content-Type", "text/html; charset=utf-8");
+      res.header("X-Frame-Options", "ALLOWALL");
+      res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.header("Pragma", "no-cache");
+      res.header("Expires", "0");
+      res.send(html);
+    } catch (error) {
+      res.status(500).send("Quiz not found");
+    }
+  });
+  app2.get("/admin", (req, res) => {
+    try {
+      const htmlPath = path.join(__dirname, "..", "admin-panel.html");
+      const html = fs.readFileSync(htmlPath, "utf8");
+      res.header("Content-Type", "text/html; charset=utf-8");
+      res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.send(html);
+    } catch (error) {
+      res.status(500).send("Admin panel not found");
+    }
+  });
+  app2.get("/api/quiz-data", (req, res) => {
+    const data = loadQuizData();
+    res.json(data);
+  });
+  app2.post("/api/quiz-data", (req, res) => {
+    try {
+      const data = req.body;
+      fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+  const httpServer = createServer(app2);
+  return httpServer;
+}
+
+// server/app.ts
+function log(message, source = "express") {
+  const formattedTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+  });
+  console.log(`${formattedTime} [${source}] ${message}`);
+}
+var app = express();
+app.use(express.json({
+  verify: (req, _res, buf) => {
+    req.rawBody = buf;
+  }
+}));
+app.use(express.urlencoded({ extended: false }));
+app.use((req, res, next) => {
+  const start = Date.now();
+  const path3 = req.path;
+  let capturedJsonResponse = void 0;
+  const originalResJson = res.json;
+  res.json = function(bodyJson, ...args) {
+    capturedJsonResponse = bodyJson;
+    return originalResJson.apply(res, [bodyJson, ...args]);
+  };
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    if (path3.startsWith("/api")) {
+      let logLine = `${req.method} ${path3} ${res.statusCode} in ${duration}ms`;
+      if (capturedJsonResponse) {
+        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      }
+      if (logLine.length > 80) {
+        logLine = logLine.slice(0, 79) + "\u2026";
+      }
+      log(logLine);
+    }
+  });
+  next();
+});
+async function runApp(setup) {
+  const server = await registerRoutes(app);
+  app.use((err, _req, res, _next) => {
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+    res.status(status).json({ message });
+    throw err;
+  });
+  await setup(app, server);
+  const port = parseInt(process.env.PORT || "5000", 10);
+  server.listen({
+    port,
+    host: "0.0.0.0",
+    reusePort: true
+  }, () => {
+    log(`serving on port ${port}`);
+  });
+}
+
+// server/index-prod.ts
+async function serveStatic(app2, server) {
+  const distPath = path2.resolve(import.meta.dirname, "public");
+  if (!fs2.existsSync(distPath)) {
+    throw new Error(
+      `Could not find the build directory: ${distPath}, make sure to build the client first`
+    );
+  }
+  app2.use(express2.static(distPath));
+  app2.use("*", (_req, res) => {
+    res.sendFile(path2.resolve(distPath, "index.html"));
+  });
+}
+(async () => {
+  await runApp(serveStatic);
+})();
+export {
+  serveStatic
+};
