@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, RefreshCcw, CheckCircle2, Zap, TrendingUp, Users, Settings } from "lucide-react";
+import { ArrowRight, ArrowLeft, RefreshCcw, CheckCircle2, AlertCircle, TrendingUp, Power, BarChart3, Users, Settings } from "lucide-react";
 import { questions as defaultQuestions, results as defaultResults } from "@/data/questions";
 import hronLogo from "@assets/HR_ON_logo_IceBlue1000px_1763730225207.png";
 import { Link } from "wouter";
@@ -10,6 +10,7 @@ import { Link } from "wouter";
 export default function OnboardingMaturityCheck() {
   const [currentStep, setCurrentStep] = useState<"start" | number | "result">("start");
   const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [hoveredOption, setHoveredOption] = useState<number | null>(null);
   const [config, setConfig] = useState<any>(null);
   const [questions, setQuestions] = useState(defaultQuestions);
   const [results, setResults] = useState(defaultResults);
@@ -40,9 +41,11 @@ export default function OnboardingMaturityCheck() {
   const handleAnswer = (points: number) => {
     if (typeof currentStep === "number") {
       setAnswers(prev => ({ ...prev, [currentStep]: points }));
+      
       setTimeout(() => {
         if (currentStep < questions.length - 1) {
           setCurrentStep(currentStep + 1);
+          setHoveredOption(null);
         } else {
           setCurrentStep("result");
           triggerConfetti();
@@ -55,6 +58,7 @@ export default function OnboardingMaturityCheck() {
     if (typeof currentStep === "number") {
       if (currentStep < questions.length - 1) {
         setCurrentStep(currentStep + 1);
+        setHoveredOption(null);
       } else {
         setCurrentStep("result");
         triggerConfetti();
@@ -93,7 +97,10 @@ export default function OnboardingMaturityCheck() {
 
     const interval: any = setInterval(function() {
       const timeLeft = animationEnd - Date.now();
-      if (timeLeft <= 0) return clearInterval(interval);
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
 
       const particleCount = 50 * (timeLeft / duration);
       confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
@@ -101,51 +108,24 @@ export default function OnboardingMaturityCheck() {
     }, 250);
   };
 
-  // Journey phases for visual element
-  const journeyPhases = [
-    { icon: "🎯", label: "Rekrutering" },
-    { icon: "🚀", label: "Preboarding" },
-    { icon: "👋", label: "Onboarding" },
-    { icon: "📈", label: "Udvikling" },
-    { icon: "🎯", label: "Fastholdelse" }
-  ];
-
   if (!config) return <div className="min-h-screen flex items-center justify-center">Indlæser...</div>;
 
   return (
     <div className="min-h-screen w-full bg-white relative overflow-hidden font-sans text-slate-900 flex flex-col">
       
-      {/* Dynamic Gradient Background */}
-      <div 
-        className="fixed inset-0 pointer-events-none z-0 opacity-5"
-        style={{
-          background: `linear-gradient(135deg, ${config?.primaryColor || '#2F80ED'} 0%, ${config?.secondaryColor || '#0B1E3D'} 100%)`
-        }}
-      />
-
-      {/* Animated Circles */}
+      {/* Abstract Brand Background Elements */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-10">
-        <motion.div
-          animate={{ scale: [1, 1.1, 1], rotate: [0, 360] }}
-          transition={{ duration: 8, repeat: Infinity }}
-          className="absolute -top-[20%] -right-[20%] w-[80vw] h-[80vw] rounded-full"
-          style={{ borderColor: config?.primaryColor || '#2F80ED', borderWidth: 100 }}
-        />
-        <motion.div
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{ duration: 10, repeat: Infinity }}
-          className="absolute top-[40%] -left-[10%] w-[40vw] h-[40vw] rounded-full blur-3xl"
-          style={{ backgroundColor: config?.secondaryColor || '#0B1E3D' }}
-        />
+        <div className="absolute -top-[20%] -right-[20%] w-[80vw] h-[80vw] border-[100px] rounded-full opacity-20" style={{ borderColor: config?.primaryColor || '#2F80ED' }} />
+        <div className="absolute top-[40%] -left-[10%] w-[40vw] h-[40vw] bg-blue-100 rounded-full blur-3xl" />
       </div>
 
-      {/* Header */}
+      {/* Minimalist Header */}
       <header className="w-full px-8 py-6 flex justify-between items-center z-50 relative">
         <img src={hronLogo} alt="HR-ON" className="h-10 w-auto" />
         <div className="flex items-center gap-4">
           {typeof currentStep === "number" && (
-            <div className="text-sm font-bold tracking-widest uppercase" style={{ color: config?.secondaryColor || '#0B1E3D' }}>
-              {currentStep + 1}/{questions.length}
+            <div className="text-sm font-bold text-blue-900 tracking-widest uppercase">
+              Spørgsmål {currentStep + 1} / {questions.length}
             </div>
           )}
           <Link href="/admin">
@@ -159,301 +139,391 @@ export default function OnboardingMaturityCheck() {
       <main className="flex-1 flex flex-col relative z-10 container mx-auto px-6 max-w-7xl">
         <AnimatePresence mode="wait">
           
-          {/* --- START SCREEN --- */}
+          {/* --- CUSTOM START SCREEN --- */}
           {currentStep === "start" && (
             <motion.div
               key="start"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="flex-1 flex flex-col justify-center items-center text-center py-20"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, x: -100 }}
+              className="flex-1 grid lg:grid-cols-2 gap-12 items-center py-12"
             >
-              <motion.div className="space-y-12 max-w-3xl mx-auto">
-                {/* Journey Visualization */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 }}
-                  className="flex justify-center items-center gap-2 mb-12"
+              <div className="space-y-10 max-w-2xl">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
                 >
-                  {journeyPhases.map((phase, idx) => (
-                    <motion.div
-                      key={idx}
-                      animate={{ y: [0, -8, 0] }}
-                      transition={{ delay: idx * 0.1, duration: 2, repeat: Infinity }}
-                      className="flex flex-col items-center gap-1"
-                    >
-                      <div className="text-4xl">{phase.icon}</div>
-                      <div className="text-xs font-medium text-slate-500 hidden md:block">{phase.label}</div>
-                      {idx < journeyPhases.length - 1 && (
-                        <motion.div 
-                          className="hidden md:block h-px w-6" 
-                          style={{ backgroundColor: config?.primaryColor || '#2F80ED' }}
-                        />
-                      )}
-                    </motion.div>
-                  ))}
+                  <span className="inline-block py-1 px-3 rounded text-xs font-bold tracking-[0.2em] uppercase mb-6" 
+                    style={{ backgroundColor: `${config?.primaryColor || '#2F80ED'}20`, color: config?.primaryColor || '#2F80ED' }}>
+                    {config?.subtitle || "HR Maturity Tools"}
+                  </span>
+                  <h1 className="text-6xl md:text-7xl font-black text-slate-900 tracking-tight leading-[0.95]">
+                    {config?.title ? config.title.split('\n').map((line: string, i: number) => (
+                      <span key={i}>
+                        {line.includes('onboarding') ? <span style={{ color: config?.primaryColor || '#2F80ED' }}>{line}</span> : line}
+                        {i < config.title.split('\n').length - 1 && <br />}
+                      </span>
+                    )) : 'Er jeres onboarding gearet til fremtiden?'}
+                  </h1>
                 </motion.div>
+                
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-xl text-slate-600 leading-relaxed max-w-lg border-l-4 pl-6"
+                  style={{ borderColor: `${config?.primaryColor || '#2F80ED'}40` }}
+                >
+                  {config?.description || "Tag vores 2-minutters maturity check og få en dybdegående analyse af jeres styrker og potentialer."}
+                </motion.p>
 
-                {/* Main Content */}
-                <div className="space-y-6">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <span className="inline-block py-2 px-4 rounded-full text-xs font-bold tracking-widest uppercase mb-6" 
-                      style={{ backgroundColor: `${config?.primaryColor || '#2F80ED'}15`, color: config?.primaryColor || '#2F80ED' }}>
-                      {config?.subtitle || "HR Maturity Check"}
-                    </span>
-                    <h1 className="text-6xl md:text-7xl font-black tracking-tight leading-[1.1] mb-6" style={{ color: config?.secondaryColor || '#0B1E3D' }}>
-                      {config?.title || "Er jeres onboarding gearet til fremtiden?"}
-                    </h1>
-                  </motion.div>
-                  
-                  <motion.p 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto"
-                  >
-                    {config?.description || "Tag vores 2-minutters maturity check og få en dybdegående analyse af jeres styrker og potentialer."}
-                  </motion.p>
-                </div>
-
-                {/* CTA Button */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
+                  className="flex flex-wrap gap-4"
                 >
                   <Button 
                     onClick={startQuiz} 
-                    className="h-16 px-12 text-lg text-white rounded-lg border-2 border-transparent transition-all shadow-xl font-semibold"
+                    className="h-16 px-10 text-lg text-white rounded-none border-2 border-transparent transition-all shadow-xl"
                     style={{ 
-                      backgroundColor: config?.primaryColor || "#2F80ED",
-                      boxShadow: `0 20px 40px -10px ${config?.primaryColor || '#2F80ED'}40`
+                      backgroundColor: config?.primaryColor || '#2F80ED',
+                      boxShadow: `0 20px 25px -5px ${config?.primaryColor || '#2F80ED'}33`
                     }}
                   >
                     {config?.buttonText || "Start testen nu"} <ArrowRight className="ml-3 w-5 h-5" />
                   </Button>
                 </motion.div>
+              </div>
+
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="relative hidden lg:flex justify-center items-center"
+              >
+                {/* Abstract Graphic representing "Maturity" */}
+                <div className="relative w-[500px] h-[500px]">
+                  <div className="absolute inset-0 border border-slate-200 rounded-full animate-[spin_60s_linear_infinite]" />
+                  <div className="absolute inset-[50px] border border-slate-200 rounded-full animate-[spin_40s_linear_infinite_reverse]" />
+                  <div className="absolute inset-[100px] border rounded-full animate-[spin_30s_linear_infinite]" style={{ borderColor: `${config?.primaryColor || '#2F80ED'}40` }} />
+                  
+                  {/* Floating Stats Cards */}
+                  <motion.div 
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                    className="absolute top-20 right-0 bg-white p-6 shadow-2xl max-w-xs z-20 border-l-4"
+                    style={{ borderColor: config?.primaryColor || '#2F80ED' }}
+                  >
+                    <BarChart3 className="w-8 h-8 mb-3" style={{ color: config?.primaryColor || '#2F80ED' }} />
+                    <h3 className="font-bold text-slate-900">Datadrevet Indsigt</h3>
+                    <p className="text-sm text-slate-500 mt-1">Få konkrete tal på jeres HR-indsats.</p>
+                  </motion.div>
+
+                  <motion.div 
+                    animate={{ y: [0, 10, 0] }}
+                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+                    className="absolute bottom-20 left-0 bg-white p-6 shadow-2xl max-w-xs z-20 border-l-4"
+                    style={{ borderColor: config?.secondaryColor || '#0B1E3D' }}
+                  >
+                    <Users className="w-8 h-8 mb-3" style={{ color: config?.secondaryColor || '#0B1E3D' }} />
+                    <h3 className="font-bold text-slate-900">Medarbejderrejse</h3>
+                    <p className="text-sm text-slate-500 mt-1">Optimér oplevelsen fra dag 1.</p>
+                  </motion.div>
+                  
+                  {/* Center Power Icon */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-32 h-32 rounded-full flex items-center justify-center text-white shadow-2xl" 
+                      style={{ backgroundColor: config?.primaryColor || '#2F80ED', boxShadow: `0 20px 50px -10px ${config?.primaryColor || '#2F80ED'}60` }}>
+                      <Power className="w-16 h-16" strokeWidth={3} />
+                    </div>
+                  </div>
+                </div>
               </motion.div>
             </motion.div>
           )}
 
-          {/* --- QUESTION SCREEN --- */}
+          {/* --- CUSTOM QUIZ SCREEN --- */}
           {typeof currentStep === "number" && currentStep < questions.length && (
             <motion.div
-              key={`question-${currentStep}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="flex-1 flex flex-col justify-between py-16"
+              key="quiz"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="flex-1 flex flex-col justify-center max-w-3xl mx-auto w-full py-8"
             >
-              <div className="max-w-4xl mx-auto w-full">
-                {/* Progress Bar */}
-                <motion.div className="mb-12 space-y-4">
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-4xl font-bold" style={{ color: config?.secondaryColor || "#0B1E3D" }}>
-                      {questions[currentStep]?.text}
-                    </h2>
-                    <div className="text-sm font-bold tracking-widest uppercase px-4 py-2 rounded-full" 
-                      style={{ backgroundColor: `${config?.primaryColor || '#2F80ED'}15`, color: config?.primaryColor || '#2F80ED' }}>
-                      {currentStep + 1}/{questions.length}
-                    </div>
-                  </div>
-                  <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                    <motion.div 
-                      className="h-full"
-                      style={{ backgroundColor: config?.primaryColor || '#2F80ED' }}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${((currentStep + 1) / questions.length) * 100}%` }}
-                      transition={{ duration: 0.5 }}
-                    />
-                  </div>
-                </motion.div>
-
-                {/* Options */}
-                <div className="space-y-4 mt-12">
-                  {questions[currentStep]?.options?.map((option: any, idx: number) => (
-                    <motion.button
-                      key={idx}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                      onClick={() => handleAnswer(option.points)}
-                      className={`w-full text-left p-6 rounded-lg transition-all duration-200 border-2 font-medium text-lg group ${
-                        answers[currentStep] === option.points 
-                          ? "text-white shadow-lg scale-105" 
-                          : "bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:shadow-md"
-                      }`}
-                      style={answers[currentStep] === option.points ? {
-                        backgroundColor: config?.secondaryColor || "#0B1E3D",
-                        borderColor: config?.primaryColor || "#2F80ED"
-                      } : {}}
-                    >
-                      <div className="flex justify-between items-center">
-                        <span>{option.text}</span>
-                        {answers[currentStep] === option.points && (
-                          <motion.div layoutId="check">
-                            <CheckCircle2 className="w-6 h-6" style={{ color: config?.primaryColor || "#2F80ED" }} />
-                          </motion.div>
-                        )}
-                      </div>
-                    </motion.button>
-                  ))}
-                </div>
+              {/* Segmented Progress Bar */}
+              <div className="flex gap-1 mb-12">
+                {questions.map((_, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ scaleY: 1 }}
+                    animate={{ 
+                      scaleY: idx === currentStep ? 1.5 : 1,
+                      backgroundColor: idx <= currentStep ? (config?.primaryColor || "#2F80ED") : "#e2e8f0"
+                    }}
+                    className={`h-1.5 flex-1 rounded-full transition-colors duration-300`}
+                  />
+                ))}
               </div>
 
-              {/* Navigation */}
-              <div className="max-w-4xl mx-auto w-full mt-12 flex justify-between items-center pt-8 border-t border-slate-100">
-                <button 
-                  onClick={prevStep} 
-                  disabled={currentStep === 0}
-                  className="flex items-center text-slate-400 hover:text-slate-900 disabled:opacity-30 transition-colors font-medium"
-                >
-                  <ArrowLeft className="mr-2 w-4 h-4" /> Forrige
-                </button>
+              <div className="space-y-8">
+                <div className="space-y-3 text-center md:text-left">
+                  <motion.span 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="inline-block px-3 py-1 rounded-full font-bold text-xs tracking-widest uppercase"
+                    style={{ backgroundColor: `${config?.primaryColor || '#2F80ED'}15`, color: config?.primaryColor || '#2F80ED' }}
+                  >
+                    {questions[currentStep]?.category}
+                  </motion.span>
+                  <motion.h2 
+                    key={currentStep}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="text-3xl md:text-4xl font-bold leading-tight"
+                    style={{ color: config?.secondaryColor || '#0B1E3D' }}
+                  >
+                    {questions[currentStep]?.text}
+                  </motion.h2>
+                </div>
 
-                <div className="flex gap-1.5">
-                  {questions.map((_, idx) => (
-                    <div 
+                <div className="grid gap-4 mt-8">
+                  {questions[currentStep]?.options?.map((option: any, idx: number) => (
+                    <motion.div
                       key={idx}
-                      className="h-2 rounded-full transition-all"
-                      style={{
-                        width: idx === currentStep ? '20px' : '8px',
-                        backgroundColor: idx <= currentStep ? config?.primaryColor || "#2F80ED" : '#e2e8f0'
-                      }}
-                    />
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 + idx * 0.1 }}
+                      onClick={() => handleAnswer(option.points)}
+                      onMouseEnter={() => setHoveredOption(idx)}
+                      onMouseLeave={() => setHoveredOption(null)}
+                      className={`
+                        group relative p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 flex items-center gap-5
+                        ${answers[currentStep] === option.points 
+                          ? "shadow-lg shadow-blue-500/10 scale-[1.02]" 
+                          : "border-white bg-white/80 shadow-sm hover:border-blue-200 hover:shadow-md hover:-translate-y-1"}
+                      `}
+                      style={answers[currentStep] === option.points ? {
+                        backgroundColor: `${config?.secondaryColor || '#0B1E3D'}12`,
+                        borderColor: config?.primaryColor || '#2F80ED'
+                      } : {}}
+                    >
+                      <div className={`
+                        w-8 h-8 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all duration-300
+                        ${answers[currentStep] === option.points 
+                          ? "text-white scale-110" 
+                          : "border-slate-200 bg-slate-50 group-hover:border-blue-300"}
+                      `}
+                      style={answers[currentStep] === option.points ? {
+                        backgroundColor: config?.primaryColor || '#2F80ED',
+                        borderColor: config?.primaryColor || '#2F80ED'
+                      } : {}}>
+                        {answers[currentStep] === option.points && (
+                          <motion.div 
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="w-2.5 h-2.5 bg-white rounded-full" 
+                          />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <p className={`text-lg ${answers[currentStep] === option.points ? "font-semibold" : "font-medium"}`}
+                          style={{ color: answers[currentStep] === option.points ? (config?.secondaryColor || '#0B1E3D') : '#374151' }}>
+                          {option.text}
+                        </p>
+                      </div>
+                      
+                      {/* Selected indicator */}
+                      <AnimatePresence>
+                        {answers[currentStep] === option.points && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0, rotate: -20 }}
+                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                            exit={{ opacity: 0, scale: 0 }}
+                            className="absolute right-4 -top-3 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg"
+                            style={{ backgroundColor: config?.primaryColor || '#2F80ED' }}
+                          >
+                            Valgt!
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
                   ))}
                 </div>
 
-                <button 
-                  onClick={nextStep} 
-                  disabled={answers[currentStep] === undefined}
-                  className={`flex items-center font-bold transition-all ${
-                    answers[currentStep] === undefined 
-                      ? "text-slate-300 cursor-not-allowed" 
-                      : "hover:translate-x-1"
-                  }`}
-                  style={answers[currentStep] !== undefined ? { color: config?.primaryColor || "#2F80ED" } : {}}
-                >
-                  Næste <ArrowRight className="ml-2 w-4 h-4" />
-                </button>
+                <div className="flex justify-between items-center pt-8">
+                  <Button 
+                    variant="ghost" 
+                    onClick={prevStep} 
+                    disabled={currentStep === 0}
+                    className="text-slate-400 hover:text-slate-900 hover:bg-white/50 -ml-4"
+                  >
+                    <ArrowLeft className="mr-2 w-4 h-4" /> Tilbage
+                  </Button>
+                  <Button 
+                    onClick={nextStep} 
+                    disabled={answers[currentStep] === undefined}
+                    className={`h-12 px-8 rounded-full font-semibold text-white transition-all duration-300 ${
+                      answers[currentStep] === undefined 
+                        ? "bg-slate-200 text-slate-400 cursor-not-allowed" 
+                        : "shadow-lg hover:-translate-y-0.5"
+                    }`}
+                    style={answers[currentStep] !== undefined ? { 
+                      backgroundColor: config?.primaryColor || '#2F80ED',
+                      boxShadow: `0 10px 20px -5px ${config?.primaryColor || '#2F80ED'}40`
+                    } : {}}
+                  >
+                    Næste <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </motion.div>
           )}
 
-          {/* --- RESULT SCREEN --- */}
+          {/* --- CUSTOM RESULT SCREEN --- */}
           {currentStep === "result" && (
             <motion.div
               key="result"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="flex-1 flex flex-col justify-center py-16"
+              className="flex-1 py-12 max-w-5xl mx-auto w-full"
             >
-              <div className="max-w-4xl mx-auto w-full">
-                <div className="grid lg:grid-cols-5 gap-8">
-                  {/* Score Card */}
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.1 }}
-                    className="lg:col-span-2 bg-white rounded-3xl p-8 shadow-2xl border"
-                    style={{ borderColor: `${config?.primaryColor || '#2F80ED'}30` }}
-                  >
-                    <div className="text-center space-y-6">
-                      <h3 className="text-xs font-bold tracking-widest uppercase" style={{ color: config?.secondaryColor || "#0B1E3D" }}>
-                        Din Score
-                      </h3>
+              <div className="grid lg:grid-cols-12 gap-8 items-start">
+                
+                {/* Score Card - Left Side */}
+                <div className="lg:col-span-5 bg-white rounded-3xl p-8 shadow-[0_20px_50px_-12px_rgba(11,30,61,0.1)] border border-slate-100 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-2" style={{ backgroundColor: config?.primaryColor || '#2F80ED' }} />
+                  
+                  <div className="text-center pt-6 pb-10">
+                    <h3 className="font-bold tracking-widest uppercase text-xs mb-8" style={{ color: config?.secondaryColor || '#0B1E3D' }}>Onboarding Maturity Score</h3>
+                    
+                    <div className="relative w-56 h-56 mx-auto mb-6">
+                      {/* Outer Glow */}
+                      <div className="absolute inset-0 bg-blue-400/10 rounded-full blur-2xl" />
                       
-                      <div className="relative w-48 h-48 mx-auto">
-                        <svg viewBox="0 0 224 224" className="w-full h-full">
-                          <circle cx="112" cy="112" r="100" fill="none" stroke="#f1f5f9" strokeWidth="16" />
-                          <motion.circle
-                            cx="112"
-                            cy="112"
-                            r="100"
-                            fill="none"
-                            stroke={config?.primaryColor || "#2F80ED"}
-                            strokeWidth="16"
-                            strokeDasharray={2 * Math.PI * 100}
-                            initial={{ strokeDashoffset: 2 * Math.PI * 100 }}
-                            animate={{ strokeDashoffset: 2 * Math.PI * 100 * (1 - calculateScore() / 30) }}
-                            transition={{ duration: 1.5, ease: "easeOut" }}
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                          <span className="text-5xl font-black" style={{ color: config?.secondaryColor || "#0B1E3D" }}>
-                            {calculateScore()}
-                          </span>
-                          <span className="text-slate-400 text-sm">af 30</span>
-                        </div>
-                      </div>
-
-                      <div>
-                        <h2 className="text-2xl font-bold mb-2" style={{ color: config?.secondaryColor || "#0B1E3D" }}>
-                          {getResult()?.title}
-                        </h2>
-                        <p className="text-slate-600 text-sm">{getResult()?.subtitle}</p>
+                      <svg className="w-full h-full transform -rotate-90 relative z-10">
+                        <circle
+                          cx="112"
+                          cy="112"
+                          r="100"
+                          fill="none"
+                          stroke="#f1f5f9"
+                          strokeWidth="16"
+                        />
+                        <motion.circle
+                          cx="112"
+                          cy="112"
+                          r="100"
+                          fill="none"
+                          stroke={config?.primaryColor || "#2F80ED"} 
+                          strokeWidth="16"
+                          strokeDasharray={2 * Math.PI * 100}
+                          initial={{ strokeDashoffset: 2 * Math.PI * 100 }}
+                          animate={{ strokeDashoffset: 2 * Math.PI * 100 * (1 - calculateScore() / 30) }}
+                          transition={{ duration: 1.5, ease: "easeOut" }}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center flex-col">
+                        <span className="text-6xl font-black tracking-tighter" style={{ color: config?.secondaryColor || '#0B1E3D' }}>{calculateScore()}</span>
+                        <span className="text-slate-400 font-medium text-sm">af 30 point</span>
                       </div>
                     </div>
-                  </motion.div>
 
-                  {/* Insights */}
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="lg:col-span-3 space-y-4"
-                  >
-                    <h3 className="text-lg font-bold flex items-center gap-2" style={{ color: config?.secondaryColor || "#0B1E3D" }}>
-                      <Zap className="w-5 h-5" style={{ color: config?.primaryColor || "#2F80ED" }} />
-                      Vigtigste indsigter
+                    <h2 className="text-2xl font-bold mb-3 leading-tight" style={{ color: config?.secondaryColor || '#0B1E3D' }}>
+                      {getResult()?.title}
+                    </h2>
+                    <div className="h-1 w-12 mx-auto rounded-full mb-4" style={{ backgroundColor: config?.primaryColor || '#2F80ED' }} />
+                  </div>
+                  
+                  <div className="bg-slate-50 -mx-8 -mb-8 p-8 border-t border-slate-100">
+                    <p className="text-slate-600 text-sm leading-relaxed text-center">
+                      {getResult()?.description}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Insights & Action - Right Side */}
+                <div className="lg:col-span-7 space-y-6">
+                  <div className="bg-white rounded-3xl p-8 shadow-[0_20px_50px_-12px_rgba(11,30,61,0.08)] border border-slate-100">
+                    <h3 className="font-bold text-lg mb-6 flex items-center gap-2" style={{ color: config?.secondaryColor || '#0B1E3D' }}>
+                      <BarChart3 className="w-5 h-5" style={{ color: config?.primaryColor || '#2F80ED' }} />
+                      Analyse af jeres niveau
                     </h3>
-
-                    <div className="space-y-3">
-                      {getResult()?.bullets?.slice(0, 4).map((bullet: any, idx: number) => (
-                        <motion.div
+                    
+                    <div className="space-y-4">
+                      {getResult()?.bullets?.map((bullet: any, idx: number) => (
+                        <motion.div 
                           key={idx}
                           initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.3 + idx * 0.1 }}
-                          className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm"
+                          className="flex gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 transition-all"
+                          style={{ borderColor: bullet.type === "strength" ? '#e2e8f0' : bullet.type === "risk" ? '#fee2e2' : '#fef3c7' }}
                         >
-                          <div className="flex gap-3">
-                            <div className="text-2xl mt-1">{bullet.emoji || "→"}</div>
-                            <p className="text-slate-700 text-sm leading-relaxed">{bullet.text}</p>
+                          <div className={`mt-1 shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                            bullet.type === "strength" ? "bg-green-100 text-green-600" :
+                            bullet.type === "risk" ? "bg-red-100 text-red-600" :
+                            "bg-amber-100 text-amber-600"
+                          }`}>
+                            {bullet.type === "strength" && <CheckCircle2 className="w-4 h-4" />}
+                            {bullet.type === "risk" && <AlertCircle className="w-4 h-4" />}
+                            {bullet.type === "opportunity" && <TrendingUp className="w-4 h-4" />}
+                          </div>
+                          <div>
+                            <span className={`text-xs font-bold uppercase tracking-wider block mb-1 ${
+                              bullet.type === "strength" ? "text-green-700" :
+                              bullet.type === "risk" ? "text-red-700" :
+                              "text-amber-700"
+                            }`}>
+                              {bullet.type === "strength" ? "Styrke" : bullet.type === "risk" ? "Risiko" : "Mulighed"}
+                            </span>
+                            <p className="text-slate-700 text-sm leading-relaxed font-medium">
+                              {bullet.text}
+                            </p>
                           </div>
                         </motion.div>
                       ))}
                     </div>
+                  </div>
 
-                    {/* CTA */}
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.7 }}
-                      className="pt-4 space-y-3"
-                    >
-                      <Button 
-                        onClick={resetQuiz}
-                        className="w-full text-white font-semibold h-12 rounded-lg"
-                        style={{ backgroundColor: config?.primaryColor || "#2F80ED" }}
-                      >
-                        Tag testen igen
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        className="w-full h-12 rounded-lg"
-                      >
-                        Læs mere
-                      </Button>
-                    </motion.div>
-                  </motion.div>
+                  {/* HR-ON Branded CTA */}
+                  <div className="rounded-3xl p-8 text-white relative overflow-hidden shadow-xl" style={{ backgroundColor: config?.secondaryColor || '#0B1E3D' }}>
+                     <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] opacity-40 translate-x-1/3 -translate-y-1/3 pointer-events-none" style={{ backgroundColor: config?.primaryColor || '#2F80ED' }} />
+                     
+                     <div className="relative z-10 flex flex-col md:flex-row items-center gap-6 justify-between">
+                       <div className="flex items-center gap-4">
+                         <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/10">
+                           <img src={hronLogo} className="w-8 h-auto brightness-0 invert opacity-90" alt="HR-ON" />
+                         </div>
+                         <div>
+                           <h4 className="font-bold text-lg">Få styr på jeres onboarding</h4>
+                           <p className="text-blue-200 text-sm max-w-xs">
+                             Saml planer, opgaver og opfølgning ét sted med HR-ON Boarding.
+                           </p>
+                         </div>
+                       </div>
+                       
+                       <div className="flex flex-col gap-2 w-full md:w-auto">
+                         <Button className="text-white border-none h-10 rounded-full px-6 font-semibold text-sm"
+                           style={{ backgroundColor: config?.primaryColor || '#2F80ED' }}>
+                           Læs mere
+                         </Button>
+                         <Button 
+                           onClick={resetQuiz} 
+                           variant="ghost" 
+                           className="text-slate-300 hover:text-white hover:bg-white/5 h-8 text-xs"
+                         >
+                           <RefreshCcw className="mr-2 w-3 h-3" /> Start forfra
+                         </Button>
+                       </div>
+                     </div>
+                  </div>
+
                 </div>
               </div>
             </motion.div>
