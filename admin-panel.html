@@ -155,45 +155,57 @@
 
         <!-- STYLING SECTION -->
         <div id="styling" class="section">
-            <div class="form-group">
-                <label>Primær knap farve:</label>
-                <div class="color-input">
-                    <input type="color" id="color_primary" value="#2563eb">
-                    <span id="color_primary_hex">#2563eb</span>
+            <div class="grid-2">
+                <div>
+                    <div class="form-group">
+                        <label>Primær knap farve:</label>
+                        <div class="color-input">
+                            <input type="color" id="color_primary" value="#2563eb">
+                            <span id="color_primary_hex">#2563eb</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Primær mørk farve:</label>
+                        <div class="color-input">
+                            <input type="color" id="color_primary_dark" value="#1d4ed8">
+                            <span id="color_primary_dark_hex">#1d4ed8</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Header padding (top/bottom px):</label>
+                        <input type="number" id="header_padding" value="8" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Overskrift font:</label>
+                        <select id="font_heading" onchange="updateFontPreview()">
+                            <option value="Roboto Condensed">Roboto Condensed</option>
+                            <option value="Roboto">Roboto</option>
+                            <option value="Inter">Inter</option>
+                            <option value="Arial">Arial</option>
+                            <option value="Helvetica">Helvetica</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Brødtekst font:</label>
+                        <select id="font_body" onchange="updateFontPreview()">
+                            <option value="Roboto">Roboto</option>
+                            <option value="Roboto Condensed">Roboto Condensed</option>
+                            <option value="Inter">Inter</option>
+                            <option value="Arial">Arial</option>
+                            <option value="Helvetica">Helvetica</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" onclick="saveStyling()">💾 Gem styling indstillinger</button>
+                </div>
+                <div style="border-left: 2px solid #e2e8f0; padding-left: 24px;">
+                    <div class="column-header">Preview</div>
+                    <div style="padding: 16px; border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc;">
+                        <h2 style="margin-bottom: 12px;" id="preview-heading">Overskrift eksempel</h2>
+                        <p id="preview-body" style="margin-bottom: 0;">Dette er et eksempel på brødtekst. Se hvordan fontene ser ud når du ændrer dem.</p>
+                        <button style="margin-top: 12px; padding: 8px 16px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer;">Eksempel knap</button>
+                    </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label>Primær mørk farve:</label>
-                <div class="color-input">
-                    <input type="color" id="color_primary_dark" value="#1d4ed8">
-                    <span id="color_primary_dark_hex">#1d4ed8</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Header padding (top/bottom px):</label>
-                <input type="number" id="header_padding" value="8" min="0" max="100">
-            </div>
-            <div class="form-group">
-                <label>Overskrift font:</label>
-                <select id="font_heading">
-                    <option value="Roboto Condensed">Roboto Condensed</option>
-                    <option value="Roboto">Roboto</option>
-                    <option value="Inter">Inter</option>
-                    <option value="Arial">Arial</option>
-                    <option value="Helvetica">Helvetica</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Brødtekst font:</label>
-                <select id="font_body">
-                    <option value="Roboto">Roboto</option>
-                    <option value="Roboto Condensed">Roboto Condensed</option>
-                    <option value="Inter">Inter</option>
-                    <option value="Arial">Arial</option>
-                    <option value="Helvetica">Helvetica</option>
-                </select>
-            </div>
-            <button class="btn-primary" onclick="saveStyling()">💾 Gem styling indstillinger</button>
         </div>
     </div>
 
@@ -296,6 +308,9 @@
             document.getElementById('color_primary').value = quizData.color_primary || '#2563eb';
             document.getElementById('color_primary_dark').value = quizData.color_primary_dark || '#1d4ed8';
             document.getElementById('header_padding').value = quizData.header_padding || 8;
+            document.getElementById('font_heading').value = quizData.font_heading || 'Roboto Condensed';
+            document.getElementById('font_body').value = quizData.font_body || 'Roboto';
+            updateFontPreview();
         }
 
         function renderQuestions() {
@@ -476,10 +491,19 @@
             saveData();
         }
 
+        function updateFontPreview() {
+            const headingFont = document.getElementById('font_heading').value;
+            const bodyFont = document.getElementById('font_body').value;
+            document.getElementById('preview-heading').style.fontFamily = `'${headingFont}', sans-serif`;
+            document.getElementById('preview-body').style.fontFamily = `'${bodyFont}', sans-serif`;
+        }
+
         async function saveStyling() {
             quizData.color_primary = document.getElementById('color_primary').value;
             quizData.color_primary_dark = document.getElementById('color_primary_dark').value;
             quizData.header_padding = parseInt(document.getElementById('header_padding').value);
+            quizData.font_heading = document.getElementById('font_heading').value;
+            quizData.font_body = document.getElementById('font_body').value;
             saveData();
         }
 
