@@ -79,15 +79,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Quiz endpoints
   app.get("/quiz", (req, res) => {
     try {
-      const htmlPath = path.join(__dirname, "..", "onboarding-quiz.html");
+      const htmlPath = path.join(__dirname, "..", "original-quiz.html");
       const html = fs.readFileSync(htmlPath, "utf8");
       res.header("Content-Type", "text/html; charset=utf-8");
       res.header("X-Frame-Options", "ALLOWALL");
       res.header("Cache-Control", "no-cache, no-store, must-revalidate");
       res.header("Pragma", "no-cache");
       res.header("Expires", "0");
-      // Prevent any app CSS from affecting quiz
-      res.header("X-UA-Compatible", "IE=edge");
       res.send(html);
     } catch (error) {
       res.status(500).send("Quiz not found");
