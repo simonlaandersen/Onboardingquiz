@@ -151,7 +151,7 @@ export default function OnboardingMaturityCheck() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, x: -100 }}
-              className="flex-1 grid lg:grid-cols-2 gap-12 items-center py-6"
+              className="flex-1 grid lg:grid-cols-2 gap-12 items-center py-6 pt-[0px] pb-[0px]"
             >
               <div className="space-y-10 max-w-2xl">
                 <motion.div 
