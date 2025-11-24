@@ -15,7 +15,9 @@
   "cta_logo_text": "HR-ON",
   "color_primary": "#2563eb",
   "color_primary_dark": "#1d4ed8",
-  "header_padding": 0,
+  "header_padding": 8,
+  "font_heading": "Roboto",
+  "font_body": "Roboto Condensed",
   "questions": [
     {
       "id": 1,
