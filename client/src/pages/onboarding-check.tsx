@@ -128,7 +128,7 @@ export default function OnboardingMaturityCheck() {
       </div>
 
       {/* Minimalist Header */}
-      <header className="w-full px-8 py-6 flex justify-between items-center z-50 relative">
+      <header className="w-full px-8 py-2 flex justify-between items-center z-50 relative border-b border-slate-100">
         <img src={hronLogo} alt="HR-ON" className="h-10 w-auto" />
         <div className="flex items-center gap-4">
           {typeof currentStep === "number" && (
@@ -154,7 +154,7 @@ export default function OnboardingMaturityCheck() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, x: -100 }}
-              className="flex-1 grid lg:grid-cols-2 gap-12 items-center py-12"
+              className="flex-1 grid lg:grid-cols-2 gap-12 items-center py-6"
             >
               <div className="space-y-10 max-w-2xl">
                 <motion.div 
