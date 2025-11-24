@@ -42,6 +42,7 @@ export default function OnboardingMaturityCheck() {
     if (typeof currentStep === "number") {
       setAnswers(prev => ({ ...prev, [currentStep]: points }));
       
+      // Auto-advance after a short delay to show selection feedback
       setTimeout(() => {
         if (currentStep < questions.length - 1) {
           setCurrentStep(currentStep + 1);
@@ -108,14 +109,12 @@ export default function OnboardingMaturityCheck() {
     }, 250);
   };
 
-  if (!config) return <div className="min-h-screen flex items-center justify-center">Indlæser...</div>;
-
   return (
     <div className="min-h-screen w-full bg-white relative overflow-hidden font-sans text-slate-900 flex flex-col">
       
       {/* Abstract Brand Background Elements */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-10">
-        <div className="absolute -top-[20%] -right-[20%] w-[80vw] h-[80vw] border-[100px] rounded-full opacity-20" style={{ borderColor: config?.primaryColor || '#2F80ED' }} />
+        <div className="absolute -top-[20%] -right-[20%] w-[80vw] h-[80vw] border-[100px] border-blue-600 rounded-full opacity-20" />
         <div className="absolute top-[40%] -left-[10%] w-[40vw] h-[40vw] bg-blue-100 rounded-full blur-3xl" />
       </div>
 
@@ -154,17 +153,11 @@ export default function OnboardingMaturityCheck() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <span className="inline-block py-1 px-3 rounded text-xs font-bold tracking-[0.2em] uppercase mb-6" 
-                    style={{ backgroundColor: `${config?.primaryColor || '#2F80ED'}20`, color: config?.primaryColor || '#2F80ED' }}>
+                  <span className="inline-block py-1 px-3 rounded bg-blue-50 text-blue-600 text-xs font-bold tracking-[0.2em] uppercase mb-6">
                     {config?.subtitle || "HR Maturity Tools"}
                   </span>
                   <h1 className="text-6xl md:text-7xl font-black text-slate-900 tracking-tight leading-[0.95]">
-                    {config?.title ? config.title.split('\n').map((line: string, i: number) => (
-                      <span key={i}>
-                        {line.includes('onboarding') ? <span style={{ color: config?.primaryColor || '#2F80ED' }}>{line}</span> : line}
-                        {i < config.title.split('\n').length - 1 && <br />}
-                      </span>
-                    )) : 'Er jeres onboarding gearet til fremtiden?'}
+                    {config?.title || "Er jeres onboarding gearet til fremtiden?"}
                   </h1>
                 </motion.div>
                 
@@ -172,8 +165,7 @@ export default function OnboardingMaturityCheck() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="text-xl text-slate-600 leading-relaxed max-w-lg border-l-4 pl-6"
-                  style={{ borderColor: `${config?.primaryColor || '#2F80ED'}40` }}
+                  className="text-xl text-slate-600 leading-relaxed max-w-lg border-l-4 border-blue-200 pl-6"
                 >
                   {config?.description || "Tag vores 2-minutters maturity check og få en dybdegående analyse af jeres styrker og potentialer."}
                 </motion.p>
@@ -188,8 +180,8 @@ export default function OnboardingMaturityCheck() {
                     onClick={startQuiz} 
                     className="h-16 px-10 text-lg text-white rounded-none border-2 border-transparent transition-all shadow-xl"
                     style={{ 
-                      backgroundColor: config?.primaryColor || '#2F80ED',
-                      boxShadow: `0 20px 25px -5px ${config?.primaryColor || '#2F80ED'}33`
+                      backgroundColor: config?.primaryColor || "#2F80ED",
+                      boxShadow: `0 20px 25px -5px ${config?.primaryColor || "#2F80ED"}33`
                     }}
                   >
                     {config?.buttonText || "Start testen nu"} <ArrowRight className="ml-3 w-5 h-5" />
@@ -207,16 +199,15 @@ export default function OnboardingMaturityCheck() {
                 <div className="relative w-[500px] h-[500px]">
                   <div className="absolute inset-0 border border-slate-200 rounded-full animate-[spin_60s_linear_infinite]" />
                   <div className="absolute inset-[50px] border border-slate-200 rounded-full animate-[spin_40s_linear_infinite_reverse]" />
-                  <div className="absolute inset-[100px] border rounded-full animate-[spin_30s_linear_infinite]" style={{ borderColor: `${config?.primaryColor || '#2F80ED'}40` }} />
+                  <div className="absolute inset-[100px] border border-blue-100 rounded-full animate-[spin_30s_linear_infinite]" />
                   
                   {/* Floating Stats Cards */}
                   <motion.div 
                     animate={{ y: [0, -10, 0] }}
                     transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                    className="absolute top-20 right-0 bg-white p-6 shadow-2xl max-w-xs z-20 border-l-4"
-                    style={{ borderColor: config?.primaryColor || '#2F80ED' }}
+                    className="absolute top-20 right-0 bg-white p-6 shadow-2xl shadow-blue-900/10 max-w-xs z-20 border-l-4 border-blue-500"
                   >
-                    <BarChart3 className="w-8 h-8 mb-3" style={{ color: config?.primaryColor || '#2F80ED' }} />
+                    <BarChart3 className="w-8 h-8 text-blue-600 mb-3" />
                     <h3 className="font-bold text-slate-900">Datadrevet Indsigt</h3>
                     <p className="text-sm text-slate-500 mt-1">Få konkrete tal på jeres HR-indsats.</p>
                   </motion.div>
@@ -224,18 +215,16 @@ export default function OnboardingMaturityCheck() {
                   <motion.div 
                     animate={{ y: [0, 10, 0] }}
                     transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
-                    className="absolute bottom-20 left-0 bg-white p-6 shadow-2xl max-w-xs z-20 border-l-4"
-                    style={{ borderColor: config?.secondaryColor || '#0B1E3D' }}
+                    className="absolute bottom-20 left-0 bg-white p-6 shadow-2xl shadow-blue-900/10 max-w-xs z-20 border-l-4 border-indigo-500"
                   >
-                    <Users className="w-8 h-8 mb-3" style={{ color: config?.secondaryColor || '#0B1E3D' }} />
+                    <Users className="w-8 h-8 text-indigo-600 mb-3" />
                     <h3 className="font-bold text-slate-900">Medarbejderrejse</h3>
                     <p className="text-sm text-slate-500 mt-1">Optimér oplevelsen fra dag 1.</p>
                   </motion.div>
                   
                   {/* Center Power Icon */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-32 h-32 rounded-full flex items-center justify-center text-white shadow-2xl" 
-                      style={{ backgroundColor: config?.primaryColor || '#2F80ED', boxShadow: `0 20px 50px -10px ${config?.primaryColor || '#2F80ED'}60` }}>
+                    <div className="w-32 h-32 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-2xl shadow-blue-600/40">
                       <Power className="w-16 h-16" strokeWidth={3} />
                     </div>
                   </div>
@@ -245,141 +234,95 @@ export default function OnboardingMaturityCheck() {
           )}
 
           {/* --- CUSTOM QUIZ SCREEN --- */}
-          {typeof currentStep === "number" && currentStep < questions.length && (
+          {typeof currentStep === "number" && (
             <motion.div
               key="quiz"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="flex-1 flex flex-col justify-center max-w-3xl mx-auto w-full py-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="flex-1 flex flex-col justify-center max-w-5xl mx-auto w-full py-8"
             >
-              {/* Segmented Progress Bar */}
-              <div className="flex gap-1 mb-12">
-                {questions.map((_, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ scaleY: 1 }}
-                    animate={{ 
-                      scaleY: idx === currentStep ? 1.5 : 1,
-                      backgroundColor: idx <= currentStep ? (config?.primaryColor || "#2F80ED") : "#e2e8f0"
-                    }}
-                    className={`h-1.5 flex-1 rounded-full transition-colors duration-300`}
-                  />
-                ))}
-              </div>
-
-              <div className="space-y-8">
-                <div className="space-y-3 text-center md:text-left">
-                  <motion.span 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="inline-block px-3 py-1 rounded-full font-bold text-xs tracking-widest uppercase"
-                    style={{ backgroundColor: `${config?.primaryColor || '#2F80ED'}15`, color: config?.primaryColor || '#2F80ED' }}
-                  >
-                    {questions[currentStep]?.category}
-                  </motion.span>
-                  <motion.h2 
-                    key={currentStep}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="text-3xl md:text-4xl font-bold leading-tight"
-                    style={{ color: config?.secondaryColor || '#0B1E3D' }}
-                  >
+              <div className="grid lg:grid-cols-12 gap-12">
+                {/* Question Side */}
+                <div className="lg:col-span-5 space-y-8">
+                  <div className="w-12 h-12 bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xl rounded-full mb-6">
+                    {currentStep + 1}
+                  </div>
+                  <h2 className="text-4xl font-bold leading-tight" style={{ color: config?.secondaryColor || "#0B1E3D" }}>
                     {questions[currentStep]?.text}
-                  </motion.h2>
+                  </h2>
+                  <div className="h-1 w-24" style={{ backgroundColor: config?.primaryColor || "#2F80ED" }} />
+                  <p className="text-slate-500 uppercase tracking-wider font-bold text-sm">
+                    {questions[currentStep].category}
+                  </p>
                 </div>
 
-                <div className="grid gap-4 mt-8">
-                  {questions[currentStep]?.options?.map((option: any, idx: number) => (
-                    <motion.div
+                {/* Options Side */}
+                <div className="lg:col-span-7 grid gap-4 content-center">
+                  {questions[currentStep].options.map((option, idx) => (
+                    <motion.button
                       key={idx}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 + idx * 0.1 }}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1 }}
                       onClick={() => handleAnswer(option.points)}
-                      onMouseEnter={() => setHoveredOption(idx)}
-                      onMouseLeave={() => setHoveredOption(null)}
                       className={`
-                        group relative p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 flex items-center gap-5
+                        group relative w-full text-left p-6 transition-all duration-200 border-l-4 
                         ${answers[currentStep] === option.points 
-                          ? "shadow-lg shadow-blue-500/10 scale-[1.02]" 
-                          : "border-white bg-white/80 shadow-sm hover:border-blue-200 hover:shadow-md hover:-translate-y-1"}
+                          ? "text-white shadow-xl scale-[1.02]" 
+                          : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900"}
                       `}
                       style={answers[currentStep] === option.points ? {
-                        backgroundColor: `${config?.secondaryColor || '#0B1E3D'}12`,
-                        borderColor: config?.primaryColor || '#2F80ED'
+                        backgroundColor: config?.secondaryColor || "#0B1E3D",
+                        borderColor: config?.primaryColor || "#2F80ED"
                       } : {}}
                     >
-                      <div className={`
-                        w-8 h-8 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all duration-300
-                        ${answers[currentStep] === option.points 
-                          ? "text-white scale-110" 
-                          : "border-slate-200 bg-slate-50 group-hover:border-blue-300"}
-                      `}
-                      style={answers[currentStep] === option.points ? {
-                        backgroundColor: config?.primaryColor || '#2F80ED',
-                        borderColor: config?.primaryColor || '#2F80ED'
-                      } : {}}>
+                      <div className="flex items-center justify-between">
+                        <span className="text-lg font-medium pr-8">{option.text}</span>
                         {answers[currentStep] === option.points && (
-                          <motion.div 
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="w-2.5 h-2.5 bg-white rounded-full" 
-                          />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <p className={`text-lg ${answers[currentStep] === option.points ? "font-semibold" : "font-medium"}`}
-                          style={{ color: answers[currentStep] === option.points ? (config?.secondaryColor || '#0B1E3D') : '#374151' }}>
-                          {option.text}
-                        </p>
-                      </div>
-                      
-                      {/* Selected indicator */}
-                      <AnimatePresence>
-                        {answers[currentStep] === option.points && (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0, rotate: -20 }}
-                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                            exit={{ opacity: 0, scale: 0 }}
-                            className="absolute right-4 -top-3 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg"
-                            style={{ backgroundColor: config?.primaryColor || '#2F80ED' }}
-                          >
-                            Valgt!
+                          <motion.div layoutId="check">
+                             <CheckCircle2 className="w-6 h-6" style={{ color: config?.primaryColor || "#2F80ED" }} />
                           </motion.div>
                         )}
-                      </AnimatePresence>
-                    </motion.div>
+                      </div>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center mt-16 border-t border-slate-100 pt-8">
+                <button 
+                  onClick={prevStep} 
+                  disabled={currentStep === 0}
+                  className="flex items-center text-slate-400 hover:text-slate-900 disabled:opacity-30 transition-colors font-medium"
+                >
+                  <ArrowLeft className="mr-2 w-4 h-4" /> Forrige spørgsmål
+                </button>
+
+                {/* Custom Progress Indicator */}
+                <div className="flex gap-1">
+                  {questions.map((_, idx) => (
+                    <div 
+                      key={idx}
+                      className={`w-2 h-2 rounded-full transition-colors ${idx <= currentStep ? '' : 'bg-slate-200'}`}
+                      style={idx <= currentStep ? { backgroundColor: config?.primaryColor || "#2F80ED" } : {}}
+                    />
                   ))}
                 </div>
 
-                <div className="flex justify-between items-center pt-8">
-                  <Button 
-                    variant="ghost" 
-                    onClick={prevStep} 
-                    disabled={currentStep === 0}
-                    className="text-slate-400 hover:text-slate-900 hover:bg-white/50 -ml-4"
-                  >
-                    <ArrowLeft className="mr-2 w-4 h-4" /> Tilbage
-                  </Button>
-                  <Button 
-                    onClick={nextStep} 
-                    disabled={answers[currentStep] === undefined}
-                    className={`h-12 px-8 rounded-full font-semibold text-white transition-all duration-300 ${
-                      answers[currentStep] === undefined 
-                        ? "bg-slate-200 text-slate-400 cursor-not-allowed" 
-                        : "shadow-lg hover:-translate-y-0.5"
-                    }`}
-                    style={answers[currentStep] !== undefined ? { 
-                      backgroundColor: config?.primaryColor || '#2F80ED',
-                      boxShadow: `0 10px 20px -5px ${config?.primaryColor || '#2F80ED'}40`
-                    } : {}}
-                  >
-                    Næste <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
-                </div>
+                <button 
+                  onClick={nextStep} 
+                  disabled={answers[currentStep] === undefined}
+                  className={`
+                    flex items-center font-bold transition-all
+                    ${answers[currentStep] === undefined 
+                      ? "text-slate-300 cursor-not-allowed" 
+                      : "hover:translate-x-1"}
+                  `}
+                  style={answers[currentStep] !== undefined ? { color: config?.primaryColor || "#2F80ED" } : {}}
+                >
+                  Næste trin <ArrowRight className="ml-2 w-5 h-5" />
+                </button>
               </div>
             </motion.div>
           )}
@@ -396,10 +339,10 @@ export default function OnboardingMaturityCheck() {
                 
                 {/* Score Card - Left Side */}
                 <div className="lg:col-span-5 bg-white rounded-3xl p-8 shadow-[0_20px_50px_-12px_rgba(11,30,61,0.1)] border border-slate-100 relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-2" style={{ backgroundColor: config?.primaryColor || '#2F80ED' }} />
+                  <div className="absolute top-0 left-0 w-full h-2" style={{ backgroundColor: config?.primaryColor || "#2F80ED" }} />
                   
                   <div className="text-center pt-6 pb-10">
-                    <h3 className="font-bold tracking-widest uppercase text-xs mb-8" style={{ color: config?.secondaryColor || '#0B1E3D' }}>Onboarding Maturity Score</h3>
+                    <h3 className="font-bold tracking-widest uppercase text-xs mb-8" style={{ color: config?.secondaryColor || "#0B1E3D" }}>Onboarding Maturity Score</h3>
                     
                     <div className="relative w-56 h-56 mx-auto mb-6">
                       {/* Outer Glow */}
@@ -429,20 +372,20 @@ export default function OnboardingMaturityCheck() {
                         />
                       </svg>
                       <div className="absolute inset-0 flex items-center justify-center flex-col">
-                        <span className="text-6xl font-black tracking-tighter" style={{ color: config?.secondaryColor || '#0B1E3D' }}>{calculateScore()}</span>
+                        <span className="text-6xl font-black tracking-tighter" style={{ color: config?.secondaryColor || "#0B1E3D" }}>{calculateScore()}</span>
                         <span className="text-slate-400 font-medium text-sm">af 30 point</span>
                       </div>
                     </div>
 
-                    <h2 className="text-2xl font-bold mb-3 leading-tight" style={{ color: config?.secondaryColor || '#0B1E3D' }}>
+                    <h2 className="text-2xl font-bold mb-3 leading-tight" style={{ color: config?.secondaryColor || "#0B1E3D" }}>
                       {getResult()?.title}
                     </h2>
-                    <div className="h-1 w-12 mx-auto rounded-full mb-4" style={{ backgroundColor: config?.primaryColor || '#2F80ED' }} />
+                    <div className="h-1 w-12 mx-auto rounded-full mb-4" style={{ backgroundColor: config?.primaryColor || "#2F80ED" }} />
                   </div>
                   
                   <div className="bg-slate-50 -mx-8 -mb-8 p-8 border-t border-slate-100">
                     <p className="text-slate-600 text-sm leading-relaxed text-center">
-                      {getResult()?.description}
+                      {getResult().description}
                     </p>
                   </div>
                 </div>
@@ -450,20 +393,24 @@ export default function OnboardingMaturityCheck() {
                 {/* Insights & Action - Right Side */}
                 <div className="lg:col-span-7 space-y-6">
                   <div className="bg-white rounded-3xl p-8 shadow-[0_20px_50px_-12px_rgba(11,30,61,0.08)] border border-slate-100">
-                    <h3 className="font-bold text-lg mb-6 flex items-center gap-2" style={{ color: config?.secondaryColor || '#0B1E3D' }}>
-                      <BarChart3 className="w-5 h-5" style={{ color: config?.primaryColor || '#2F80ED' }} />
+                    <h3 className="font-bold text-lg mb-6 flex items-center gap-2" style={{ color: config?.secondaryColor || "#0B1E3D" }}>
+                      <BarChart3 className="w-5 h-5" style={{ color: config?.primaryColor || "#2F80ED" }} />
                       Analyse af jeres niveau
                     </h3>
                     
                     <div className="space-y-4">
-                      {getResult()?.bullets?.map((bullet: any, idx: number) => (
+                      {getResult().bullets.map((bullet, idx) => (
                         <motion.div 
                           key={idx}
                           initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.3 + idx * 0.1 }}
                           className="flex gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 transition-all"
-                          style={{ borderColor: bullet.type === "strength" ? '#e2e8f0' : bullet.type === "risk" ? '#fee2e2' : '#fef3c7' }}
+                          style={{ 
+                            "--hover-border": `${config?.primaryColor || "#2F80ED"}4d`,
+                          } as any}
+                          onMouseEnter={(e) => e.currentTarget.style.borderColor = `${config?.primaryColor || "#2F80ED"}4d`}
+                          onMouseLeave={(e) => e.currentTarget.style.borderColor = "#e2e8f0"}
                         >
                           <div className={`mt-1 shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                             bullet.type === "strength" ? "bg-green-100 text-green-600" :
@@ -492,8 +439,8 @@ export default function OnboardingMaturityCheck() {
                   </div>
 
                   {/* HR-ON Branded CTA */}
-                  <div className="rounded-3xl p-8 text-white relative overflow-hidden shadow-xl" style={{ backgroundColor: config?.secondaryColor || '#0B1E3D' }}>
-                     <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] opacity-40 translate-x-1/3 -translate-y-1/3 pointer-events-none" style={{ backgroundColor: config?.primaryColor || '#2F80ED' }} />
+                  <div className="rounded-3xl p-8 text-white relative overflow-hidden shadow-xl" style={{ backgroundColor: config?.secondaryColor || "#0B1E3D" }}>
+                     <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] opacity-40 translate-x-1/3 -translate-y-1/3 pointer-events-none" style={{ backgroundColor: config?.primaryColor || "#2F80ED" }} />
                      
                      <div className="relative z-10 flex flex-col md:flex-row items-center gap-6 justify-between">
                        <div className="flex items-center gap-4">
@@ -509,8 +456,7 @@ export default function OnboardingMaturityCheck() {
                        </div>
                        
                        <div className="flex flex-col gap-2 w-full md:w-auto">
-                         <Button className="text-white border-none h-10 rounded-full px-6 font-semibold text-sm"
-                           style={{ backgroundColor: config?.primaryColor || '#2F80ED' }}>
+                         <Button className="text-white border-none h-10 rounded-full px-6 font-semibold text-sm" style={{ backgroundColor: config?.primaryColor || "#2F80ED" }}>
                            Læs mere
                          </Button>
                          <Button 
