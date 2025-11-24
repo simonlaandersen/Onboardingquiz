@@ -1,8 +1,5 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/public",
   "installCommand": "npm install",
-  "routes": [
-    { "src": "/(.*)", "dest": "/api/handler.js" }
-  ]
+  "outputDirectory": "dist"
 }
