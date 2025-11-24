@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz Admin Panel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f1f5f9; color: #1e293b; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+        header { background: #0f172a; color: white; padding: 24px; border-radius: 8px; margin-bottom: 32px; }
+        header h1 { font-size: 28px; margin-bottom: 8px; }
+        .admin-nav { display: flex; gap: 16px; margin-bottom: 24px; }
+        .nav-btn { padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .nav-btn.active { background: #1e40af; }
+        .nav-btn:hover { background: #1d4ed8; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .form-group { margin-bottom: 24px; background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #2563eb; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: #0f172a; }
+        input[type="text"], input[type="number"], input[type="url"], textarea, select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-family: inherit; font-size: 14px; }
+        textarea { min-height: 80px; resize: vertical; }
+        .button-group { display: flex; gap: 12px; margin-top: 16px; }
+        button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-secondary { background: #e2e8f0; color: #0f172a; }
+        .btn-secondary:hover { background: #cbd5e1; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .questions-list { background: white; border-radius: 8px; overflow: hidden; }
+        .question-item { border-bottom: 1px solid #e2e8f0; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .question-item:last-child { border-bottom: none; }
+        .question-item h4 { margin-bottom: 4px; }
+        .question-item p { font-size: 12px; color: #64748b; }
+        .question-item .actions { display: flex; gap: 8px; }
+        .question-item button { padding: 6px 12px; font-size: 12px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 32px; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-content h2 { margin-bottom: 20px; }
+        .modal-close { float: right; background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b; }
+        .results-list { background: white; border-radius: 8px; overflow: hidden; }
+        .result-item { border-bottom: 1px solid #e2e8f0; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .result-item:last-child { border-bottom: none; }
+        .result-item h4 { margin-bottom: 4px; }
+        .result-item p { font-size: 12px; color: #64748b; }
+        .result-item .actions { display: flex; gap: 8px; }
+        .result-item button { padding: 6px 12px; font-size: 12px; }
+        .status-message { padding: 12px 16px; border-radius: 4px; margin-bottom: 16px; display: none; }
+        .status-message.success { display: block; background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
+        .status-message.error { display: block; background: #fee2e2; color: #7f1d1d; border-left: 4px solid #ef4444; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .color-input { display: flex; align-items: center; gap: 12px; }
+        .color-input input[type="color"] { width: 60px; height: 40px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; }
+        .column-header { font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748b; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; }
+        .option-inputs { background: #f8fafc; padding: 12px; border-radius: 4px; margin-bottom: 12px; }
+        .option-inputs .form-group { margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 Quiz Admin Panel</h1>
+            <p>Rediger alle quiz-elementer her</p>
+        </header>
+
+        <div class="admin-nav">
+            <button class="nav-btn active" onclick="switchSection('general')">Generelt</button>
+            <button class="nav-btn" onclick="switchSection('questions')">Spørgsmål</button>
+            <button class="nav-btn" onclick="switchSection('results')">Resultater</button>
+            <button class="nav-btn" onclick="switchSection('styling')">Styling</button>
+        </div>
+
+        <div id="status" class="status-message"></div>
+
+        <!-- GENERAL SECTION -->
+        <div id="general" class="section active">
+            <div class="form-group">
+                <label>Badge tekst:</label>
+                <input type="text" id="badge_text" placeholder="f.eks. GRATIS VURDERING">
+            </div>
+            <div class="form-group">
+                <label>Hovedtitel:</label>
+                <input type="text" id="header_title" placeholder="f.eks. Onboarding Maturity Check">
+            </div>
+            <div class="form-group">
+                <label>Beskrivelse:</label>
+                <textarea id="description_text" placeholder="Beskriv hvad quizzen handler om..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Knap-tekst (Start):</label>
+                <input type="text" id="button_text" placeholder="f.eks. Start vurdering">
+            </div>
+            <div class="form-group">
+                <label>Stat Card 1 - Titel:</label>
+                <input type="text" id="stat1_title" placeholder="f.eks. Datadrevet Indsigt">
+            </div>
+            <div class="form-group">
+                <label>Stat Card 1 - Tekst:</label>
+                <input type="text" id="stat1_text" placeholder="f.eks. Få konkrete tal på jeres HR-indsats.">
+            </div>
+            <div class="form-group">
+                <label>Stat Card 1 - Icon (emoji):</label>
+                <input type="text" id="stat1_emoji" placeholder="📊" maxlength="2">
+            </div>
+            <div class="form-group">
+                <label>Stat Card 2 - Titel:</label>
+                <input type="text" id="stat2_title" placeholder="f.eks. Medarbejderrejse">
+            </div>
+            <div class="form-group">
+                <label>Stat Card 2 - Tekst:</label>
+                <input type="text" id="stat2_text" placeholder="f.eks. Optimér oplevelsen fra dag 1.">
+            </div>
+            <div class="form-group">
+                <label>Stat Card 2 - Icon (emoji):</label>
+                <input type="text" id="stat2_emoji" placeholder="👥" maxlength="2">
+            </div>
+            <div class="form-group">
+                <label>CTA Tekst - Titel:</label>
+                <input type="text" id="cta_title" placeholder="f.eks. Få styr på jeres onboarding">
+            </div>
+            <div class="form-group">
+                <label>CTA Tekst - Beskrivelse:</label>
+                <input type="text" id="cta_description" placeholder="f.eks. Saml planer, opgaver og opfølgning ét sted med HR-ON Boarding.">
+            </div>
+            <div class="form-group">
+                <label>"Læs mere" Link URL:</label>
+                <input type="url" id="cta_link" placeholder="f.eks. https://hr-on.com/onboardingplatform/">
+            </div>
+            <div class="form-group">
+                <label>HR-ON Logo tekst / navn:</label>
+                <input type="text" id="cta_logo_text" placeholder="f.eks. HR-ON">
+            </div>
+            <button class="btn-primary" onclick="saveGeneral()">💾 Gem generelle indstillinger</button>
+        </div>
+
+        <!-- QUESTIONS SECTION -->
+        <div id="questions" class="section">
+            <div class="questions-list" id="questionsList"></div>
+            <div style="margin-top: 24px;">
+                <button class="btn-success" onclick="addQuestion()">+ Tilføj nyt spørgsmål</button>
+            </div>
+        </div>
+
+        <!-- RESULTS SECTION -->
+        <div id="results" class="section">
+            <div class="results-list" id="resultsList"></div>
+            <div style="margin-top: 24px;">
+                <button class="btn-success" onclick="addResult()">+ Tilføj nyt resultat-niveau</button>
+            </div>
+        </div>
+
+        <!-- STYLING SECTION -->
+        <div id="styling" class="section">
+            <div class="form-group">
+                <label>Primær knap farve:</label>
+                <div class="color-input">
+                    <input type="color" id="color_primary" value="#2563eb">
+                    <span id="color_primary_hex">#2563eb</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Primær mørk farve:</label>
+                <div class="color-input">
+                    <input type="color" id="color_primary_dark" value="#1d4ed8">
+                    <span id="color_primary_dark_hex">#1d4ed8</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Header padding (top/bottom px):</label>
+                <input type="number" id="header_padding" value="8" min="0" max="100">
+            </div>
+            <button class="btn-primary" onclick="saveStyling()">💾 Gem styling indstillinger</button>
+        </div>
+    </div>
+
+    <!-- EDIT QUESTION MODAL -->
+    <div id="editQuestionModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('editQuestionModal')">✕</button>
+            <h2>Rediger spørgsmål</h2>
+            <div class="form-group">
+                <label>Kategori:</label>
+                <input type="text" id="edit_question_category" placeholder="f.eks. Plan og struktur">
+            </div>
+            <div class="form-group">
+                <label>Spørgsmål tekst:</label>
+                <textarea id="edit_question_text" placeholder="Skriv spørgsmålet..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Svar-muligheder:</label>
+                <div id="edit_question_options"></div>
+            </div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="saveQuestion()">Gem spørgsmål</button>
+                <button class="btn-secondary" onclick="closeModal('editQuestionModal')">Annuller</button>
+                <button class="btn-danger" style="margin-left: auto;" onclick="deleteCurrentQuestion()">Slet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT RESULT MODAL -->
+    <div id="editResultModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('editResultModal')">✕</button>
+            <h2>Rediger resultat-niveau</h2>
+            <div class="form-group">
+                <label>Min point:</label>
+                <input type="number" id="edit_result_min" min="0" max="30">
+            </div>
+            <div class="form-group">
+                <label>Max point:</label>
+                <input type="number" id="edit_result_max" min="0" max="30">
+            </div>
+            <div class="form-group">
+                <label>Titel:</label>
+                <input type="text" id="edit_result_title" placeholder="f.eks. Jeres onboarding er primært ad hoc">
+            </div>
+            <div class="form-group">
+                <label>Beskrivelse:</label>
+                <textarea id="edit_result_description" placeholder="Beskrivelse af dette niveau..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Kulepunkter (en pr. linje):</label>
+                <textarea id="edit_result_bullets" placeholder="Styrke: ...\nRisiko: ...\nMulighed: ..."></textarea>
+            </div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="saveResult()">Gem resultat</button>
+                <button class="btn-secondary" onclick="closeModal('editResultModal')">Annuller</button>
+                <button class="btn-danger" style="margin-left: auto;" onclick="deleteCurrentResult()">Slet</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEditingQuestionId = null;
+        let currentEditingResultId = null;
+        let quizData = {};
+
+        // Load data on startup
+        async function loadData() {
+            try {
+                const response = await fetch('/api/quiz-data');
+                const data = await response.json();
+                quizData = data;
+                populateForm();
+                renderQuestions();
+                renderResults();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showStatus('Fejl ved indlæsning af data', 'error');
+            }
+        }
+
+        function populateForm() {
+            // General
+            document.getElementById('badge_text').value = quizData.badge_text || '';
+            document.getElementById('header_title').value = quizData.header_title || '';
+            document.getElementById('description_text').value = quizData.description_text || '';
+            document.getElementById('button_text').value = quizData.button_text || '';
+            document.getElementById('stat1_title').value = quizData.stat1_title || '';
+            document.getElementById('stat1_text').value = quizData.stat1_text || '';
+            document.getElementById('stat1_emoji').value = quizData.stat1_emoji || '';
+            document.getElementById('stat2_title').value = quizData.stat2_title || '';
+            document.getElementById('stat2_text').value = quizData.stat2_text || '';
+            document.getElementById('stat2_emoji').value = quizData.stat2_emoji || '';
+            document.getElementById('cta_title').value = quizData.cta_title || '';
+            document.getElementById('cta_description').value = quizData.cta_description || '';
+            document.getElementById('cta_link').value = quizData.cta_link || '';
+            document.getElementById('cta_logo_text').value = quizData.cta_logo_text || '';
+
+            // Styling
+            document.getElementById('color_primary').value = quizData.color_primary || '#2563eb';
+            document.getElementById('color_primary_dark').value = quizData.color_primary_dark || '#1d4ed8';
+            document.getElementById('header_padding').value = quizData.header_padding || 8;
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsList');
+            container.innerHTML = '';
+            const questions = quizData.questions || [];
+            questions.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = 'question-item';
+                item.innerHTML = `
+                    <div>
+                        <h4>Q${q.id}: ${q.text.substring(0, 60)}...</h4>
+                        <p>Kategori: ${q.category}</p>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-primary" onclick="editQuestion(${idx})">Rediger</button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function renderResults() {
+            const container = document.getElementById('resultsList');
+            container.innerHTML = '';
+            const results = quizData.results || [];
+            results.forEach((r, idx) => {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                item.innerHTML = `
+                    <div>
+                        <h4>${r.min}-${r.max} point: ${r.title}</h4>
+                        <p>${r.description.substring(0, 80)}...</p>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-primary" onclick="editResult(${idx})">Rediger</button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function editQuestion(idx) {
+            currentEditingQuestionId = idx;
+            const q = quizData.questions[idx];
+            document.getElementById('edit_question_category').value = q.category;
+            document.getElementById('edit_question_text').value = q.text;
+
+            const optionsContainer = document.getElementById('edit_question_options');
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, optIdx) => {
+                const div = document.createElement('div');
+                div.className = 'option-inputs';
+                div.innerHTML = `
+                    <div class="form-group">
+                        <label>Svar ${optIdx + 1}:</label>
+                        <input type="text" value="${opt.text}" onchange="quizData.questions[${idx}].options[${optIdx}].text = this.value" placeholder="Skriv svar...">
+                    </div>
+                    <div class="form-group">
+                        <label>Point:</label>
+                        <input type="number" value="${opt.points}" onchange="quizData.questions[${idx}].options[${optIdx}].points = parseInt(this.value)" min="0" max="3">
+                    </div>
+                `;
+                optionsContainer.appendChild(div);
+            });
+
+            document.getElementById('editQuestionModal').classList.add('active');
+        }
+
+        function saveQuestion() {
+            const idx = currentEditingQuestionId;
+            quizData.questions[idx].category = document.getElementById('edit_question_category').value;
+            quizData.questions[idx].text = document.getElementById('edit_question_text').value;
+            saveData();
+            closeModal('editQuestionModal');
+            renderQuestions();
+        }
+
+        function deleteCurrentQuestion() {
+            if (confirm('Er du sikker på at du vil slette dette spørgsmål?')) {
+                quizData.questions.splice(currentEditingQuestionId, 1);
+                saveData();
+                closeModal('editQuestionModal');
+                renderQuestions();
+            }
+        }
+
+        function addQuestion() {
+            const newQuestion = {
+                id: (quizData.questions?.length || 0) + 1,
+                category: 'Ny kategori',
+                text: 'Nyt spørgsmål?',
+                options: [
+                    { text: 'Ja, helt enig', points: 3 },
+                    { text: 'Ja, mest enig', points: 2 },
+                    { text: 'Delvist enig', points: 1 },
+                    { text: 'Nej, uenig', points: 0 }
+                ]
+            };
+            if (!quizData.questions) quizData.questions = [];
+            quizData.questions.push(newQuestion);
+            saveData();
+            renderQuestions();
+        }
+
+        function editResult(idx) {
+            currentEditingResultId = idx;
+            const r = quizData.results[idx];
+            document.getElementById('edit_result_min').value = r.min;
+            document.getElementById('edit_result_max').value = r.max;
+            document.getElementById('edit_result_title').value = r.title;
+            document.getElementById('edit_result_description').value = r.description;
+            const bulletsText = (r.bullets || []).map(b => `${b.label}: ${b.text}`).join('\n');
+            document.getElementById('edit_result_bullets').value = bulletsText;
+            document.getElementById('editResultModal').classList.add('active');
+        }
+
+        function saveResult() {
+            const idx = currentEditingResultId;
+            quizData.results[idx].min = parseInt(document.getElementById('edit_result_min').value);
+            quizData.results[idx].max = parseInt(document.getElementById('edit_result_max').value);
+            quizData.results[idx].title = document.getElementById('edit_result_title').value;
+            quizData.results[idx].description = document.getElementById('edit_result_description').value;
+            
+            const bulletsText = document.getElementById('edit_result_bullets').value;
+            quizData.results[idx].bullets = bulletsText.split('\n').filter(l => l.trim()).map(line => {
+                const [label, ...rest] = line.split(':');
+                return { label: label.trim(), text: rest.join(':').trim(), type: label.toLowerCase().includes('styrke') ? 'strength' : label.toLowerCase().includes('risiko') ? 'risk' : 'opportunity' };
+            });
+            
+            saveData();
+            closeModal('editResultModal');
+            renderResults();
+        }
+
+        function deleteCurrentResult() {
+            if (confirm('Er du sikker på at du vil slette dette resultat-niveau?')) {
+                quizData.results.splice(currentEditingResultId, 1);
+                saveData();
+                closeModal('editResultModal');
+                renderResults();
+            }
+        }
+
+        function addResult() {
+            const newResult = {
+                min: 0,
+                max: 10,
+                title: 'Nyt resultat niveau',
+                description: 'Beskrivelse af resultat...',
+                bullets: [
+                    { type: 'strength', label: 'Styrke', text: 'Styrken er...' },
+                    { type: 'risk', label: 'Risiko', text: 'Risikoen er...' },
+                    { type: 'opportunity', label: 'Mulighed', text: 'Muligheden er...' }
+                ]
+            };
+            if (!quizData.results) quizData.results = [];
+            quizData.results.push(newResult);
+            saveData();
+            renderResults();
+        }
+
+        async function saveGeneral() {
+            quizData.badge_text = document.getElementById('badge_text').value;
+            quizData.header_title = document.getElementById('header_title').value;
+            quizData.description_text = document.getElementById('description_text').value;
+            quizData.button_text = document.getElementById('button_text').value;
+            quizData.stat1_title = document.getElementById('stat1_title').value;
+            quizData.stat1_text = document.getElementById('stat1_text').value;
+            quizData.stat1_emoji = document.getElementById('stat1_emoji').value;
+            quizData.stat2_title = document.getElementById('stat2_title').value;
+            quizData.stat2_text = document.getElementById('stat2_text').value;
+            quizData.stat2_emoji = document.getElementById('stat2_emoji').value;
+            quizData.cta_title = document.getElementById('cta_title').value;
+            quizData.cta_description = document.getElementById('cta_description').value;
+            quizData.cta_link = document.getElementById('cta_link').value;
+            quizData.cta_logo_text = document.getElementById('cta_logo_text').value;
+            saveData();
+        }
+
+        async function saveStyling() {
+            quizData.color_primary = document.getElementById('color_primary').value;
+            quizData.color_primary_dark = document.getElementById('color_primary_dark').value;
+            quizData.header_padding = parseInt(document.getElementById('header_padding').value);
+            saveData();
+        }
+
+        async function saveData() {
+            try {
+                const response = await fetch('/api/quiz-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(quizData)
+                });
+                if (response.ok) {
+                    showStatus('✓ Data gemt!', 'success');
+                } else {
+                    showStatus('Fejl ved gemning', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving data:', error);
+                showStatus('Fejl ved gemning', 'error');
+            }
+        }
+
+        function switchSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status-message ${type}`;
+            setTimeout(() => {
+                status.classList.remove('success', 'error');
+            }, 3000);
+        }
+
+        // Color input listeners
+        document.getElementById('color_primary')?.addEventListener('input', function() {
+            document.getElementById('color_primary_hex').textContent = this.value;
+        });
+        document.getElementById('color_primary_dark')?.addEventListener('input', function() {
+            document.getElementById('color_primary_dark_hex').textContent = this.value;
+        });
+
+        // Load on startup
+        loadData();
+    </script>
+</body>
+</html>
