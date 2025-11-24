@@ -120,15 +120,13 @@ export default function OnboardingMaturityCheck() {
 
   return (
     <div className="min-h-screen w-full bg-white relative overflow-hidden font-sans text-slate-900 flex flex-col">
-      
       {/* Abstract Brand Background Elements */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-10">
         <div className="absolute -top-[20%] -right-[20%] w-[80vw] h-[80vw] border-[100px] border-blue-600 rounded-full opacity-20" />
         <div className="absolute top-[40%] -left-[10%] w-[40vw] h-[40vw] bg-blue-100 rounded-full blur-3xl" />
       </div>
-
       {/* Minimalist Header */}
-      <header className="w-full px-8 py-2 flex justify-between items-center z-50 relative border-b border-slate-100">
+      <header className="w-full px-8 py-2 flex justify-between items-center z-50 relative border-b border-slate-100 pt-[0px] pb-[0px]">
         <img src={hronLogo} alt="HR-ON" className="h-10 w-auto" />
         <div className="flex items-center gap-4">
           {typeof currentStep === "number" && (
@@ -143,7 +141,6 @@ export default function OnboardingMaturityCheck() {
           </Link>
         </div>
       </header>
-
       <main className="flex-1 flex flex-col relative z-10 container mx-auto px-6 max-w-7xl">
         <AnimatePresence mode="wait">
           
