@@ -15,6 +15,9 @@ app.get('/', (req, res) => {
   const html = fs.readFileSync(htmlPath, 'utf8');
   res.header('Content-Type', 'text/html; charset=utf-8');
   res.header('X-Frame-Options', 'ALLOWALL');
+  res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.header('Pragma', 'no-cache');
+  res.header('Expires', '0');
   res.send(html);
 });
 
