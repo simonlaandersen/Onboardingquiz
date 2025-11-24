@@ -465,7 +465,7 @@ export default function OnboardingMaturityCheck() {
                        </div>
                        
                        <div className="flex flex-col gap-2 w-full md:w-auto">
-                         <Button className="text-white border-none h-10 rounded-full px-6 font-semibold text-sm" style={{ backgroundColor: config?.primaryColor || "#2F80ED" }}>
+                         <Button onClick={() => window.open("https://hr-on.com/onboarding-vaerktoej/", "_blank")} className="text-white border-none h-10 rounded-full px-6 font-semibold text-sm" style={{ backgroundColor: config?.primaryColor || "#2F80ED" }}>
                            Læs mere
                          </Button>
                          <Button 
