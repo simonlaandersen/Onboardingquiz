@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 5000;
+const PORT = 3001;
 
 // Serve the quiz HTML
 app.get('/', (req, res) => {
