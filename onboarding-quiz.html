@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: white;
+            background: #ffffff;
             color: #1e293b;
             line-height: 1.6;
         }
@@ -21,42 +21,11 @@
         .container {
             min-height: 100vh;
             width: 100%;
-            background: white;
+            background: #ffffff;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-        }
-
-        .background-shapes {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.1;
-            overflow: hidden;
-        }
-
-        .circle-top {
-            position: absolute;
-            top: -20%;
-            right: -20%;
-            width: 80vw;
-            height: 80vw;
-            border: 100px solid #1e40af;
-            border-radius: 50%;
-            opacity: 0.2;
-        }
-
-        .circle-left {
-            position: absolute;
-            top: 40%;
-            left: -10%;
-            width: 40vw;
-            height: 40vw;
-            background: #dbeafe;
-            border-radius: 50%;
-            filter: blur(60px);
         }
 
         header {
@@ -67,6 +36,7 @@
             align-items: center;
             z-index: 50;
             position: relative;
+            border-bottom: 1px solid #f1f5f9;
         }
 
         .header-title {
@@ -82,19 +52,6 @@
             display: block;
         }
 
-        .admin-link {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #cbd5e1;
-            font-size: 24px;
-            transition: color 0.2s;
-        }
-
-        .admin-link:hover {
-            color: #64748b;
-        }
-
         main {
             flex: 1;
             display: flex;
@@ -104,7 +61,7 @@
             max-width: 1280px;
             margin: 0 auto;
             width: 100%;
-            padding: 24px;
+            padding: 48px 32px;
         }
 
         .screen {
@@ -128,6 +85,8 @@
             position: relative;
             width: 100%;
             height: auto;
+            top: auto;
+            left: auto;
         }
 
         /* START SCREEN */
@@ -195,13 +154,13 @@
             transition: all 0.3s;
             text-decoration: none;
             color: white;
-            background: #2f80ed;
-            box-shadow: 0 20px 25px -5px rgba(47, 128, 237, 0.2);
+            background: #2563eb;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.15);
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 25px 30px -5px rgba(47, 128, 237, 0.3);
+            background: #1d4ed8;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
         }
 
         .btn.secondary {
@@ -217,90 +176,93 @@
         }
 
         .graphic {
-            display: none;
             position: relative;
-            width: 500px;
+            width: 100%;
             height: 500px;
-            margin: 0 auto;
-        }
-
-        @media (min-width: 1025px) {
-            .graphic {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-        }
-
-        .graphic-circle {
-            position: absolute;
-            border-radius: 50%;
-        }
-
-        .circle-1 {
-            inset: 0;
-            border: 1px solid #e2e8f0;
-        }
-
-        .circle-2 {
-            inset: 50px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .circle-3 {
-            inset: 100px;
-            border: 1px solid #dbeafe;
-        }
-
-        .power-icon {
-            position: absolute;
-            inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 20;
-            width: 128px;
-            height: 128px;
-            background: #2563eb;
-            border-radius: 50%;
-            left: 50%;
+        }
+
+        @media (max-width: 1024px) {
+            .graphic {
+                display: none;
+            }
+        }
+
+        .graphic-wrapper {
+            position: relative;
+            width: 450px;
+            height: 450px;
+        }
+
+        .circle-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .power-icon-container {
+            position: absolute;
             top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.4);
+            z-index: 20;
+        }
+
+        .power-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            font-size: 48px;
+            font-size: 44px;
+            box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.3);
         }
 
         .stat-card {
             background: white;
-            padding: 24px;
-            box-shadow: 0 20px 25px -5px rgba(11, 30, 61, 0.1);
+            padding: 20px 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
             z-index: 20;
             position: absolute;
-            max-width: 240px;
-            border-left: 4px solid #3b82f6;
+            max-width: 220px;
+            border-left: 4px solid #2563eb;
+            border-radius: 4px;
         }
 
         .stat-card-1 {
-            top: 80px;
-            right: 0;
+            top: 40px;
+            right: -40px;
         }
 
         .stat-card-2 {
-            bottom: 80px;
-            left: 0;
-            border-left-color: #6366f1;
+            bottom: 40px;
+            left: -40px;
+            border-left-color: #1e40af;
         }
 
         .stat-card h3 {
             font-weight: bold;
-            margin-bottom: 8px;
-            font-size: 16px;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #0f172a;
         }
 
         .stat-card p {
-            font-size: 13px;
+            font-size: 12px;
             color: #64748b;
+            line-height: 1.5;
+        }
+
+        .stat-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
         }
 
         /* QUIZ SCREEN */
@@ -339,6 +301,7 @@
             font-weight: bold;
             line-height: 1.25;
             margin-bottom: 32px;
+            color: #0f172a;
         }
 
         .quiz-category {
@@ -352,8 +315,9 @@
         .quiz-divider {
             width: 24px;
             height: 4px;
-            background: #2f80ed;
+            background: #2563eb;
             margin: 24px 0;
+            border-radius: 2px;
         }
 
         .options {
@@ -374,7 +338,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-radius: 0;
+            border-radius: 4px;
         }
 
         .option:hover {
@@ -385,13 +349,13 @@
         .option.selected {
             background: #0b1e3d;
             color: white;
-            border-color: #2f80ed;
+            border-color: #2563eb;
         }
 
         .option-check {
             width: 24px;
             height: 24px;
-            background: #2f80ed;
+            background: #2563eb;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -424,7 +388,7 @@
         }
 
         .dot.active {
-            background: #2f80ed;
+            background: #2563eb;
         }
 
         .nav-btn {
@@ -450,7 +414,7 @@
         }
 
         .nav-btn.next {
-            color: #2f80ed;
+            color: #2563eb;
         }
 
         /* RESULT SCREEN */
@@ -473,7 +437,7 @@
             background: white;
             border-radius: 24px;
             padding: 32px;
-            box-shadow: 0 20px 50px -12px rgba(11, 30, 61, 0.1);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
             border: 1px solid #f1f5f9;
             position: relative;
             overflow: hidden;
@@ -486,7 +450,7 @@
             left: 0;
             right: 0;
             height: 8px;
-            background: #2f80ed;
+            background: #2563eb;
         }
 
         .score-header {
@@ -514,7 +478,7 @@
         .score-glow {
             position: absolute;
             inset: 0;
-            background: rgba(96, 165, 250, 0.1);
+            background: rgba(96, 165, 250, 0.05);
             border-radius: 50%;
             filter: blur(32px);
         }
@@ -533,7 +497,7 @@
 
         .score-progress-circle {
             fill: none;
-            stroke: #2f80ed;
+            stroke: #2563eb;
             stroke-width: 16;
             stroke-linecap: round;
             transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -573,7 +537,7 @@
         .result-divider {
             width: 12px;
             height: 4px;
-            background: #2f80ed;
+            background: #2563eb;
             margin: 16px auto;
             border-radius: 2px;
         }
@@ -602,7 +566,7 @@
             background: white;
             border-radius: 24px;
             padding: 32px;
-            box-shadow: 0 20px 50px -12px rgba(11, 30, 61, 0.08);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
             border: 1px solid #f1f5f9;
         }
 
@@ -619,7 +583,7 @@
         .insights-icon {
             width: 20px;
             height: 20px;
-            color: #2f80ed;
+            color: #2563eb;
             font-size: 18px;
         }
 
@@ -640,7 +604,7 @@
         }
 
         .bullet:hover {
-            border-color: rgba(47, 128, 237, 0.3);
+            border-color: rgba(37, 99, 235, 0.3);
         }
 
         .bullet-icon {
@@ -704,7 +668,7 @@
             color: white;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 20px 25px -5px rgba(11, 30, 61, 0.2);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
             background: #0b1e3d;
         }
 
@@ -714,10 +678,10 @@
             right: 0;
             width: 256px;
             height: 256px;
-            background: #2f80ed;
+            background: #2563eb;
             border-radius: 50%;
             filter: blur(80px);
-            opacity: 0.4;
+            opacity: 0.3;
             transform: translate(1/3, -1/3);
             pointer-events: none;
         }
@@ -746,7 +710,7 @@
 
         .cta-text p {
             font-size: 14px;
-            color: #93c5fd;
+            color: #bfdbfe;
             line-height: 1.5;
             max-width: 280px;
         }
@@ -758,24 +722,24 @@
         }
 
         .btn-white {
-            background: #2f80ed;
+            background: #2563eb;
             color: white;
             padding: 10px 24px;
             font-size: 14px;
             font-weight: 600;
             border: none;
-            border-radius: 24px;
+            border-radius: 4px;
             cursor: pointer;
             transition: background 0.2s;
         }
 
         .btn-white:hover {
-            background: #1e5ec6;
+            background: #1d4ed8;
         }
 
         .btn-ghost {
             background: transparent;
-            color: #cbd5e1;
+            color: #93c5fd;
             border: none;
             cursor: pointer;
             font-size: 13px;
@@ -794,17 +758,11 @@
 </head>
 <body>
     <div class="container">
-        <div class="background-shapes">
-            <div class="circle-top"></div>
-            <div class="circle-left"></div>
-        </div>
-
         <header>
             <div></div>
             <div class="header-title">
                 Spørgsmål <span class="current-q">1</span> / <span class="total-q">10</span>
             </div>
-            <button class="admin-link">⚙️</button>
         </header>
 
         <main>
@@ -817,19 +775,28 @@
                     <button class="btn" onclick="app.startQuiz()">Start testen nu →</button>
                 </div>
                 <div class="graphic">
-                    <div class="graphic-circle circle-1"></div>
-                    <div class="graphic-circle circle-2"></div>
-                    <div class="graphic-circle circle-3"></div>
-                    <div class="power-icon">⚡</div>
-                    <div class="stat-card stat-card-1">
-                        <div style="font-size: 20px; margin-bottom: 8px;">📊</div>
-                        <h3>Datadrevet Indsigt</h3>
-                        <p>Få konkrete tal på jeres HR-indsats.</p>
-                    </div>
-                    <div class="stat-card stat-card-2">
-                        <div style="font-size: 20px; margin-bottom: 8px;">👥</div>
-                        <h3>Medarbejderrejse</h3>
-                        <p>Optimér oplevelsen fra dag 1.</p>
+                    <div class="graphic-wrapper">
+                        <svg class="circle-svg" viewBox="0 0 450 450">
+                            <circle cx="225" cy="225" r="200" fill="none" stroke="#e2e8f0" stroke-width="1" opacity="0.6"/>
+                            <circle cx="225" cy="225" r="140" fill="none" stroke="#e2e8f0" stroke-width="1" opacity="0.6"/>
+                            <circle cx="225" cy="225" r="80" fill="none" stroke="#dbeafe" stroke-width="1" opacity="0.6"/>
+                        </svg>
+                        
+                        <div class="power-icon-container">
+                            <div class="power-icon">⚡</div>
+                        </div>
+                        
+                        <div class="stat-card stat-card-1">
+                            <div class="stat-icon">📊</div>
+                            <h3>Datadrevet Indsigt</h3>
+                            <p>Få konkrete tal på jeres HR-indsats.</p>
+                        </div>
+                        
+                        <div class="stat-card stat-card-2">
+                            <div class="stat-icon">👥</div>
+                            <h3>Medarbejderrejse</h3>
+                            <p>Optimér oplevelsen fra dag 1.</p>
+                        </div>
                     </div>
                 </div>
             </div>
