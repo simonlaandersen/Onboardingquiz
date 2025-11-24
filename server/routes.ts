@@ -76,10 +76,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Quiz endpoints - serve original quiz
+  // Quiz endpoints - serve static quiz
   app.get("/quiz", (req, res) => {
     try {
-      const htmlPath = path.join(__dirname, "..", "onboarding-quiz.html");
+      const htmlPath = path.join(__dirname, "..", "static-quiz.html");
       const html = fs.readFileSync(htmlPath, "utf8");
       res.header("Content-Type", "text/html; charset=utf-8");
       res.header("X-Frame-Options", "ALLOWALL");
