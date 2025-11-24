@@ -30,9 +30,19 @@ export default function OnboardingMaturityCheck() {
         description: data.description_text || "Tag vores 2-minutters maturity check og få en dybdegående analyse af jeres styrker og potentialer.",
         buttonText: data.button_text || "Start testen nu",
         primaryColor: data.color_primary || "#2F80ED",
-        secondaryColor: "#0B1E3D"
+        secondaryColor: "#0B1E3D",
+        fontHeading: data.font_heading || "Roboto Condensed",
+        fontBody: data.font_body || "Roboto"
       };
       setConfig(config);
+      
+      // Apply fonts dynamically
+      const style = document.createElement('style');
+      style.textContent = `
+        body { font-family: '${config.fontBody}', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: '${config.fontHeading}', sans-serif; }
+      `;
+      document.head.appendChild(style);
       
       if (data.questions && data.questions.length > 0) {
         setQuestions(data.questions);

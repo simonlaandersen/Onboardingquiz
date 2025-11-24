@@ -16,6 +16,8 @@
   "color_primary": "#2563eb",
   "color_primary_dark": "#1d4ed8",
   "header_padding": 0,
+  "font_heading": "Roboto Condensed",
+  "font_body": "Roboto",
   "questions": [
     {
       "id": 1,
