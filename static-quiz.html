@@ -74,9 +74,18 @@
                     <div class="graphic">
                         <div class="graphic-wrapper">
                             <svg class="circle-svg" viewBox="0 0 450 450">
-                                <circle cx="225" cy="225" r="200" fill="none" stroke="#f1f5f9" stroke-width="2"/>
-                                <circle cx="225" cy="225" r="150" fill="none" stroke="#e2e8f0" stroke-width="2"/>
-                                <circle cx="225" cy="225" r="100" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+                                <defs>
+                                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                                        <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+                                        <feMerge>
+                                            <feMergeNode in="coloredBlur"/>
+                                            <feMergeNode in="SourceGraphic"/>
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <circle cx="225" cy="225" r="120" fill="#2563eb" opacity="0.15" filter="url(#glow)"/>
+                                <circle cx="225" cy="225" r="100" fill="none" stroke="#e8f0f9" stroke-width="2"/>
+                                <circle cx="225" cy="225" r="70" fill="none" stroke="#d0e0f0" stroke-width="1.5"/>
                             </svg>
                             <div class="power-icon-container">
                                 <div class="power-icon">
