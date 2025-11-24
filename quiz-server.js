@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 3001;
+const PORT = 3000;
 const DATA_FILE = path.join(__dirname, 'quiz-data.json');
 
 app.use(express.json());
@@ -104,7 +104,8 @@ app.post('/api/quiz-data', (req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Quiz server running at http://0.0.0.0:${PORT}`);
-  console.log(`Quiz: http://0.0.0.0:${PORT}`);
-  console.log(`Admin panel: http://0.0.0.0:${PORT}/admin`);
+  console.log(`\n✅ Quiz server running!`);
+  console.log(`📱 Quiz: Use the Preview and select port 3000 (32835 → 3000)`);
+  console.log(`⚙️  Admin panel: Add /admin to the URL`);
+  console.log(`\nFull URL will be like: https://your-replit.replit.dev:3000/admin\n`);
 });
